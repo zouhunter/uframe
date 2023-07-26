@@ -35,3 +35,8 @@ extendable unity game framework,easy and powerfall
         AsyncAssetsOperation<T> LoadAssetsAsync<T>(string address, ushort flags = 0) where T : UnityEngine.Object;
         AsyncSceneOperation LoadSceneAsync(string address, string sceneName = null, ushort flags = 0, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode = UnityEngine.SceneManagement.LoadSceneMode.Single);
         void PreloadAssetBundle(BundleItem bundleItem, System.Action<string, object> onLoadBundle, HashSet<BundleItem> deepLoading);
+
+## - Manage
+        BaseGameManage<T>
+        AgentContext<AgentContainer> : Agent where AgentContainer : AgentContext<AgentContainer>, new()
+        Singleton<Agent> : UFrame.Agent where Agent : Singleton<Agent>, new()s
