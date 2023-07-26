@@ -1,7 +1,7 @@
 # uframe
 extendable unity game framework,easy and powerfall
 
-## LitUI
+## - LitUI
         event Action<UIInfo> onUIOpenEvent;
         event Action<UIInfo> onUICloseEvent;
         void SetUIRoot(Transform root);
@@ -23,3 +23,15 @@ extendable unity game framework,easy and powerfall
         void CleanStacks(bool hideOnly = true, byte layer = byte.MaxValue);
         
         support custom uiloader
+
+## - DressAB
+        AsyncPreloadOperation StartPreload(ushort flags);
+        AsyncPreloadOperation StartPreload(params string[] address);
+        bool ExistAddress(string address);
+        bool TryGetAddressGroup(string address, out string addressGroup, out string assetName);
+        AsyncBundleOperation LoadAssetBundleAsync(string address, ushort flags);
+        AsyncAssetOperation<T> LoadAssetAsync<T>(string address, ushort flags = 0) where T : UnityEngine.Object;
+        AsyncAssetOperation<T> LoadAssetAsync<T>(string address, string assetname, ushort flags = 0) where T : UnityEngine.Object;
+        AsyncAssetsOperation<T> LoadAssetsAsync<T>(string address, ushort flags = 0) where T : UnityEngine.Object;
+        AsyncSceneOperation LoadSceneAsync(string address, string sceneName = null, ushort flags = 0, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode = UnityEngine.SceneManagement.LoadSceneMode.Single);
+        void PreloadAssetBundle(BundleItem bundleItem, System.Action<string, object> onLoadBundle, HashSet<BundleItem> deepLoading);
