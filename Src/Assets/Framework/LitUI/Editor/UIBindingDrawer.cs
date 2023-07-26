@@ -12,7 +12,7 @@ using Object = UnityEngine.Object;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Jagat.LitUI
+namespace UFrame.LitUI
 {
     [CustomPropertyDrawer(typeof(UIBinding), true)]
     public class UIBindingDrawer : PropertyDrawer

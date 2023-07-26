@@ -7,7 +7,7 @@
 using System;
 using UnityEngine;
 
-namespace Jagat.LitUI
+namespace UFrame.LitUI
 {
     public interface IUILoader
     {
