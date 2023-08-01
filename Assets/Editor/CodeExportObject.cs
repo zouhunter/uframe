@@ -15,9 +15,10 @@ namespace UFrame
     public class CodeExportObject : ScriptableObject
     {
         public string exportPath = "Export";
+        [HideInInspector]
         public string sourceNameSpace = "UFrame";
         public string exportNameSpace = "Foundation";
-        public bool encrypt = false;
+        public bool encryptDll = false;
         [HideInInspector]
         public List<BuildInfo> buildInfos = new List<BuildInfo>();
 
@@ -156,7 +157,7 @@ namespace UFrame
 
         private void BuildCode(string path)
         {
-            BuildCodeByPath(path);
+            BuildCodeByPath(path,false);
         }
 
         private void CollectFiles(string flags,string dir, List<string> files, bool ignoreEditor)
@@ -257,7 +258,7 @@ namespace UFrame
                 Debug.LogFormat("Warnings: {0} - Errors: {1}", warningCount, errorCount);
                 EditorApplication.delayCall += () =>
                 {
-                    if (obj.encrypt)
+                    if (obj.encryptDll)
                     {
                         var outputDir = $"{System.Environment.CurrentDirectory }/{obj.exportPath}/encrypted-dlls/{builder.buildTarget}";
                         DoCodeGuard(builder.assemblyPath, outputDir);
@@ -298,21 +299,28 @@ namespace UFrame
                     }
                 }
             }
-            BuildCodeByPath(sourceDir);
+            BuildCodeByPath(sourceDir,true);
         }
 
-        private void BuildCodeByPath(string path)
+        private void BuildCodeByPath(string path,bool top)
         {
             List<string> files = new List<string>();
-            var dirs = System.IO.Directory.GetDirectories(path);
-            foreach (var item in dirs)
+            if (top)
             {
-                var dirName = System.IO.Path.GetRelativePath(sourceDir, item);
-                var info = obj.buildInfos.Find(x => x.dirName == dirName);
-                if (info == null || info.active)
+                var dirs = System.IO.Directory.GetDirectories(path);
+                foreach (var item in dirs)
                 {
-                    CollectFiles("*",item, files, false);
+                    var dirName = System.IO.Path.GetRelativePath(sourceDir, item);
+                    var info = obj.buildInfos.Find(x => x.dirName == dirName);
+                    if (info == null || info.active)
+                    {
+                        CollectFiles("*", item, files, false);
+                    }
                 }
+            }
+            else
+            {
+                CollectFiles("*", path, files, false);
             }
             var counter = 0;
             float countAll = files.Count;
@@ -334,6 +342,7 @@ namespace UFrame
                     break;
             }
             EditorUtility.ClearProgressBar();
+            ShowDir(targetFolder);
         }
 
 
