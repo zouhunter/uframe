@@ -1,0 +1,19 @@
+{
+    "name": "Jagat.DressAssetBundle.Browser",
+    "rootNamespace": "",
+    "references": [
+        "GUID:41f6121baaa6da440a547658f317e290",
+        "GUID:7569b15ea9561bb459c8de755cf21e92"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
