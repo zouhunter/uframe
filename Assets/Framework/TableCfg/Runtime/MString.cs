@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public struct MString
     {

@@ -6,7 +6,7 @@
 *   - 表控制器使用接口                                                                *
 *//************************************************************************************/
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public interface ITableController
     {

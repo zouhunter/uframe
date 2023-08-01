@@ -10,7 +10,7 @@ using System.IO;
 using System;
 using System.Text;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class CsvFileReader : System.IO.BinaryReader
     {

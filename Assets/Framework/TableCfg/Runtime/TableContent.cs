@@ -5,7 +5,7 @@
 *  功能:                                                                              *
 *   - 表容器                                                                          *
 *//************************************************************************************/
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class TableContent
     {

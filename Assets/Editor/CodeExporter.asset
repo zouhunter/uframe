@@ -19,15 +19,22 @@ MonoBehaviour:
   buildInfos:
   - dirName: DressAB
     additionalDefines: 
+    active: 1
   - dirName: Http
     additionalDefines: 
+    active: 1
   - dirName: LitUI
     additionalDefines: 
+    active: 1
   - dirName: Manage
     additionalDefines: 
+    active: 1
   - dirName: Scripting
     additionalDefines: 
+    active: 1
   - dirName: Storage
     additionalDefines: 
+    active: 0
   - dirName: TableCfg
     additionalDefines: 
+    active: 0

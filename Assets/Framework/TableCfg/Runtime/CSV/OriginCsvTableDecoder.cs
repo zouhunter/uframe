@@ -11,7 +11,7 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class OriginCsvTableDecoder : ITableDecoder
     {

@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class BinaryTableDecoder : ITableDecoder
     {

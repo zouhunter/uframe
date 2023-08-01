@@ -8,7 +8,7 @@
 
 using System.Collections;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class AsyncTableOperation : IEnumerator
     {

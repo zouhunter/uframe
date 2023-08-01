@@ -9,7 +9,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     [System.Serializable]
     public class TableData : IDisposable

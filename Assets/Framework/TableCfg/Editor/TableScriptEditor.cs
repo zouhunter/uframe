@@ -22,7 +22,7 @@ using UnityEditor;
 
 using UnityEngine;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class TableScriptEditor
     {
@@ -284,7 +284,7 @@ namespace Jagat.TableCfg
             return null;
         }
 
-        [MenuItem("Assets/Create/Jagat/TableScript/(from file)")]
+        [MenuItem("Assets/Create/UFrame/TableScript/(from file)")]
         static void CreateTableScriptFromCsv()
         {
             var csvFile = EditorUtility.OpenFilePanel("先选择配制文档", LoadPreferFolder(import), "");
@@ -307,7 +307,7 @@ namespace Jagat.TableCfg
             }
         }
 
-        [MenuItem("Assets/Create/Jagat/TableScript/(from folder)")]
+        [MenuItem("Assets/Create/UFrame/TableScript/(from folder)")]
         static void CreateTableScriptFromCsvs()
         {
             var csvFolder = EditorUtility.OpenFolderPanel("先选择配制文档文件夹", LoadPreferFolder(import), "");
@@ -347,7 +347,7 @@ namespace Jagat.TableCfg
             }
         }
 
-        [MenuItem("Assets/Create/Jagat/TableScript/(table ctrl)")]
+        [MenuItem("Assets/Create/UFrame/TableScript/(table ctrl)")]
         static void CreateTableCtrlScript()
         {
             var csvFolder = EditorUtility.OpenFolderPanel("先选择表资源文件夹", LoadPreferFolder(import), "");
@@ -380,7 +380,7 @@ namespace Jagat.TableCfg
             }
         }
 
-        [MenuItem("Assets/Create/Jagat/TableScript/(auto all)")]
+        [MenuItem("Assets/Create/UFrame/TableScript/(auto all)")]
         static void CreateTableScriptsFromCsvs()
         {
             var csvFolder = EditorUtility.OpenFolderPanel("先选择表资源文件夹", LoadPreferFolder(import), "");
@@ -398,7 +398,7 @@ namespace Jagat.TableCfg
             }
         }
 
-        [MenuItem("Assets/Create/Jagat/TableScript/(table proxy from file)")]
+        [MenuItem("Assets/Create/UFrame/TableScript/(table proxy from file)")]
         static void CreateTableProxyFromCsv()
         {
             var csvFile = EditorUtility.OpenFilePanel("先选择配制文档", LoadPreferFolder(import), "");
@@ -423,7 +423,7 @@ namespace Jagat.TableCfg
             }
         }
 
-        [MenuItem("Assets/Create/Jagat/TableScript/(table proxy from folder)")]
+        [MenuItem("Assets/Create/UFrame/TableScript/(table proxy from folder)")]
         static void CreateTableProxysFromCsvs()
         {
             var csvFolder = EditorUtility.OpenFolderPanel("先选择配制文档文件夹", LoadPreferFolder(import), "");
@@ -509,7 +509,7 @@ namespace Jagat.TableCfg
         {
             try
             {
-                string tableNameSpace = "Jagat.TableCfg";
+                string tableNameSpace = "UFrame.TableCfg";
                 string namespaceStr = tableNameSpace;
                 var lastPoint = scriptName.LastIndexOf('.');
                 bool useTableNameSpace = false;
@@ -521,7 +521,7 @@ namespace Jagat.TableCfg
                 }
                 var cfgType = FindTypeInAllAssemble(scriptName);
                 if (cfgType == null)
-                    cfgType = FindTypeInAllAssemble($"Jagat.TableCfg.{scriptName}");
+                    cfgType = FindTypeInAllAssemble($"UFrame.TableCfg.{scriptName}");
                 System.Text.StringBuilder sb = new System.Text.StringBuilder();
                 var descs = table.Descs().Select(x => x.ToString()).ToList();
                 var types = table.Types().Select(x => x.ToString()).ToList();
@@ -654,7 +654,7 @@ namespace Jagat.TableCfg
             sb.AppendLine("///                   3.使用时请先调用StartLoadAll");
             sb.AppendLine("///* ************************************************************************************/\n");
             sb.AppendLine("using UnityEngine;\n");
-            sb.AppendLine("namespace Jagat.TableCfg");
+            sb.AppendLine("namespace UFrame.TableCfg");
             sb.AppendLine("{");
             sb.AppendFormat("    public class {0} : TableController\n", scriptName);
             sb.AppendLine("    {");
@@ -773,7 +773,7 @@ namespace Jagat.TableCfg
                 var cfgName = GetTableName(table);
                 var cfgType = FindTypeInAllAssemble(cfgName);
                 if (cfgType == null)
-                    cfgType = FindTypeInAllAssemble($"Jagat.TableCfg.{cfgName}");
+                    cfgType = FindTypeInAllAssemble($"UFrame.TableCfg.{cfgName}");
                 if (cfgType == null)
                 {
                     Debug.LogError("failed find class type:" + cfgName);
@@ -804,7 +804,7 @@ namespace Jagat.TableCfg
                 string classBaseType = "";
                 if (cfgType != null)
                 {
-                    if (string.IsNullOrEmpty(cfgType.Namespace) || cfgType.Namespace == "Jagat.TableCfg")
+                    if (string.IsNullOrEmpty(cfgType.Namespace) || cfgType.Namespace == "UFrame.TableCfg")
                         classBaseType = cfgType.Name + ", ";
                     else
                         classBaseType = cfgType.FullName + ", ";
@@ -832,7 +832,7 @@ namespace Jagat.TableCfg
                 sb.AppendLine("using System.Collections;");
                 sb.AppendLine("using System.Collections.Generic;");
                 sb.AppendLine("using UnityEngine;");
-                sb.AppendLine("using Jagat.TableCfg;");
+                sb.AppendLine("using UFrame.TableCfg;");
                 sb.AppendLine();
 
                 sb.AppendLine($"public class {scriptName} : ProxyTable<{scriptName},{optionKeyTypes} {cfgType.Name}>");

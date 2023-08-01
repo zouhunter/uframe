@@ -5,7 +5,7 @@ using System.Text;
 using System.Reflection;
 using System;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class DefaultRowProcess:IRowProcess
     {

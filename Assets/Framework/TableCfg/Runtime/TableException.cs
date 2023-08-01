@@ -8,7 +8,7 @@
 
 using System;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class TableException : Exception
     {

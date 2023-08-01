@@ -8,7 +8,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class Table<Row> : ITable where Row : IRow, new()
     {

@@ -33,6 +33,7 @@ namespace UFrame
         {
             public string dirName;
             public string additionalDefines;
+            public bool active = true;
         }
     }
 
@@ -54,15 +55,15 @@ namespace UFrame
             moduleList.displayAdd = moduleList.displayRemove = false;
             moduleList.drawHeaderCallback += OnDrawHeader;
             moduleList.drawElementCallback += GetDrawElementCallback;
-            obj.buildInfos.RemoveAll(x=>System.Array.Find(moduleDirs,y=>x.dirName==y) == null);
+            obj.buildInfos.RemoveAll(x => System.Array.Find(moduleDirs, y => x.dirName == System.IO.Path.GetRelativePath(sourceDir, y)) == null);
         }
 
         private void GetDrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
         {
             var path = moduleDirs[index];
             var moduleName = path.Substring(System.IO.Path.GetDirectoryName(path).Length + 1);
-            EditorGUI.LabelField(rect, moduleName + ":");
-
+            var labelRect = new Rect(rect.x + 20, rect.y, 300, rect.height);
+            EditorGUI.LabelField(labelRect, moduleName + ":");
             var exportCodeRect = new Rect(rect.x + rect.width - 120, rect.y, 60, rect.height);
             var exportDllRect = exportCodeRect;
             exportDllRect.x += exportCodeRect.width;
@@ -76,15 +77,17 @@ namespace UFrame
                 var targetFolder = $"{System.Environment.CurrentDirectory }/{obj.exportPath}/{moduleName}";
                 BuildDll(targetFolder, moduleName, EditorUserBuildSettings.activeBuildTarget);
             }
-            var defineRect = new Rect(rect.x + 100,rect.y + 2,rect.width - 230,rect.height-4);
+            var defineRect = new Rect(rect.x + 100, rect.y + 2, rect.width - 230, rect.height - 4);
             var info = obj.buildInfos.Find(x => x.dirName == moduleName);
-            if(info == null)
+            if (info == null)
             {
                 info = new CodeExportObject.BuildInfo();
                 info.dirName = moduleName;
                 obj.buildInfos.Add(info);
             }
             info.additionalDefines = EditorGUI.TextField(defineRect, info.additionalDefines);
+            var activeRect = new Rect(rect.x, rect.y, 20, rect.height);
+            info.active = EditorGUI.Toggle(activeRect, info.active);
         }
 
         private void OnDrawHeader(Rect rect)
@@ -94,44 +97,59 @@ namespace UFrame
             exportDllRect.x += exportCodeRect.width;
             if (GUI.Button(exportCodeRect, "code-all", EditorStyles.miniButtonLeft))
             {
-                BuildCodeAll();
+                BuildCodeAll(false);
             }
             if (GUI.Button(exportDllRect, "dll-all", EditorStyles.miniButtonLeft))
             {
-                BuildCodeAll();
+                BuildCodeAll(true);
                 BuildDllAll(EditorUserBuildSettings.activeBuildTarget);
             }
-            EditorGUI.LabelField(rect,"Assemblies:");
+            EditorGUI.LabelField(rect, "Assemblies:");
         }
 
         public override void OnInspectorGUI()
         {
-            base.OnInspectorGUI();
-            moduleList.DoLayoutList();
+            using (var changeScope = new EditorGUI.ChangeCheckScope())
+            {
+                base.OnInspectorGUI();
+                moduleList.DoLayoutList();
+                if (changeScope.changed)
+                {
+                    EditorUtility.SetDirty(obj);
+                    //Debug.LogError(obj + " chaged!");
+                }
+            }
         }
 
         private void BuildDll(string path, string moduleName, BuildTarget target)
         {
-            string[] csfiles = System.IO.Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories);
+            var files = new List<string>();
+            CollectFiles("*.cs", path, files, true);
+            if (files.Count == 0)
+            {
+                Debug.LogError("empty runtime dir:" + path);
+                return;
+            }
+            string[] csfiles = files.ToArray();
             var output = $"{System.Environment.CurrentDirectory}/{obj.exportPath}/dlls/{target}";
             System.IO.Directory.CreateDirectory(output);
             var defineFiles = System.IO.Directory.GetFiles(path, "*.asmdef", SearchOption.AllDirectories);
             foreach (var item in defineFiles)
             {
                 var info = JsonUtility.FromJson<CodeExportObject.AsmInfo>(System.IO.File.ReadAllText(item));
-                if (System.Array.Find(info.includePlatforms, x => x == "Editor") == null)
+                if (info.includePlatforms != null && System.Array.Find(info.includePlatforms, x => x == "Editor") == null)
                 {
                     moduleName = info.name;
-                    csfiles = System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(item), "*.cs", SearchOption.AllDirectories);
+                    break;
                 }
             }
             var assembilyPath = $"{output}/{moduleName}.dll";
             var builder = new AssemblyBuilder(assembilyPath, csfiles);
             builder.buildTarget = target;
             var buildInfo = obj.buildInfos.Find(x => x.dirName == moduleName);
-            if(buildInfo != null)
+            if (buildInfo != null && buildInfo.additionalDefines != null && buildInfo.additionalDefines.Length > 0)
             {
-                builder.additionalDefines = buildInfo.additionalDefines.Split(new char[] { '|', ';', ',' });
+                builder.additionalDefines = buildInfo.additionalDefines?.Split(new char[] { '|', ';', ',' });
             }
             StartBuild(builder);
         }
@@ -141,25 +159,32 @@ namespace UFrame
             BuildCodeByPath(path);
         }
 
-        private void CollectCSharpScripts(string dir,List<string> files)
+        private void CollectFiles(string flags,string dir, List<string> files, bool ignoreEditor)
         {
-            var defineFiles = Directory.GetFiles(dir, "*.asmdef",SearchOption.TopDirectoryOnly);
-            foreach (var item in defineFiles)
+            if (ignoreEditor)
             {
-                var info = JsonUtility.FromJson<CodeExportObject.AsmInfo>(System.IO.File.ReadAllText(item));
-                if (info.includePlatforms != null && System.Array.Find(info.includePlatforms, x => x == "Editor") != null)
+                var defineFiles = Directory.GetFiles(dir, "*.asmdef", SearchOption.TopDirectoryOnly);
+                foreach (var item in defineFiles)
                 {
-                    return;
+                    if (item.EndsWith("Editor"))
+                        return;
+
+                    var info = JsonUtility.FromJson<CodeExportObject.AsmInfo>(System.IO.File.ReadAllText(item));
+                    if (info.includePlatforms != null && System.Array.Find(info.includePlatforms, x => x == "Editor") != null)
+                    {
+                        return;
+                    }
                 }
             }
 
-            var topFiles = System.IO.Directory.GetFiles(dir, "*.cs", SearchOption.TopDirectoryOnly);
+
+            var topFiles = System.IO.Directory.GetFiles(dir, flags, SearchOption.TopDirectoryOnly);
             files.AddRange(topFiles);
 
             var dirs = System.IO.Directory.GetDirectories(dir, "*", SearchOption.TopDirectoryOnly);
             foreach (var subDir in dirs)
             {
-                CollectCSharpScripts(subDir, files);
+                CollectFiles(flags,subDir, files, ignoreEditor);
             }
         }
 
@@ -167,7 +192,12 @@ namespace UFrame
         {
             var sourceFolder = $"{System.Environment.CurrentDirectory }/{obj.exportPath}";
             var files = new List<string>();
-            CollectCSharpScripts(sourceFolder, files);
+            CollectFiles("*.cs",sourceFolder, files, true);
+            if(files.Count == 0)
+            {
+                Debug.LogError("empty cs!");
+                return;
+            }
             string[] csfiles = files.ToArray();
             var output = $"{System.Environment.CurrentDirectory}/{obj.exportPath}/dlls/{target}";
             Directory.CreateDirectory(output);
@@ -177,11 +207,20 @@ namespace UFrame
             var defines = new List<string>();
             foreach (var item in obj.buildInfos)
             {
-                var itemInfos = item.additionalDefines?.Split(new char[] { '|', ';', ',' });
-                if(itemInfos != null && itemInfos.Length > 0)
-                    defines.AddRange(itemInfos);
+                if(item.active && !string.IsNullOrEmpty(item.additionalDefines))
+                {
+                    var itemInfos = item.additionalDefines?.Split(new char[] { '|', ';', ',' });
+                    if (itemInfos != null && itemInfos.Length > 0)
+                    {
+                        defines.AddRange(itemInfos);
+                    }
+                }
             }
-            builder.additionalDefines = defines.ToArray();
+            if(defines.Count > 0)
+            {
+                Debug.LogError(defines.Count);
+                builder.additionalDefines = defines.ToArray();
+            }
             StartBuild(builder);
         }
 
@@ -192,7 +231,7 @@ namespace UFrame
             {
                 Debug.LogFormat("Assembly build started for {0}", assemblyPath);
             };
-            // Called on main thread
+            // Called on main thread 
             builder.buildFinished += delegate (string assemblyPath, CompilerMessage[] compilerMessages)
             {
                 foreach (var item in compilerMessages)
@@ -216,10 +255,11 @@ namespace UFrame
                 var errorCount = compilerMessages.Count(m => m.type == CompilerMessageType.Error);
                 Debug.LogFormat("Assembly build finished for {0}", assemblyPath);
                 Debug.LogFormat("Warnings: {0} - Errors: {1}", warningCount, errorCount);
-                EditorApplication.delayCall +=()=> {
+                EditorApplication.delayCall += () =>
+                {
                     if (obj.encrypt)
                     {
-                        var outputDir = $"{System.Environment.CurrentDirectory }/{obj.exportPath}/encrypted-dlls/{target}";
+                        var outputDir = $"{System.Environment.CurrentDirectory }/{obj.exportPath}/encrypted-dlls/{builder.buildTarget}";
                         DoCodeGuard(builder.assemblyPath, outputDir);
                         ShowDir(outputDir);
                     }
@@ -237,20 +277,51 @@ namespace UFrame
             Application.OpenURL(new System.Uri(dir).AbsoluteUri);
         }
 
-        private void BuildCodeAll()
+        private void BuildCodeAll(bool clean)
         {
+            if (clean)
+            {
+                var output = $"{System.Environment.CurrentDirectory}/{obj.exportPath}";
+                var oldDirs = System.IO.Directory.GetFileSystemEntries(output);
+                var targetName = EditorUserBuildSettings.activeBuildTarget.ToString();
+                foreach (var item in oldDirs)
+                {
+                    if (System.IO.Directory.Exists(item))
+                    {
+                        if (item.EndsWith(targetName) || item.EndsWith("dlls"))
+                            continue;
+                        System.IO.Directory.Delete(item, true);
+                    }
+                    else
+                    {
+                        System.IO.File.Delete(item);
+                    }
+                }
+            }
             BuildCodeByPath(sourceDir);
         }
 
         private void BuildCodeByPath(string path)
         {
-            var files = System.IO.Directory.GetFiles(path, "*", System.IO.SearchOption.AllDirectories);
+            List<string> files = new List<string>();
+            var dirs = System.IO.Directory.GetDirectories(path);
+            foreach (var item in dirs)
+            {
+                var dirName = System.IO.Path.GetRelativePath(sourceDir, item);
+                var info = obj.buildInfos.Find(x => x.dirName == dirName);
+                if (info == null || info.active)
+                {
+                    CollectFiles("*",item, files, false);
+                }
+            }
             var counter = 0;
-            float countAll = files.Length;
+            float countAll = files.Count;
             var targetFolder = System.Environment.CurrentDirectory + "/" + obj.exportPath;
             foreach (var item in files)
             {
                 var relePath = System.IO.Path.GetRelativePath(sourceDir, item);
+                if (relePath.EndsWith(".meta"))
+                    continue;
                 var text = System.IO.File.ReadAllText(item);
                 text = text.Replace(obj.sourceNameSpace, obj.exportNameSpace);
                 text = text.Replace(obj.sourceNameSpace.ToLower(), obj.exportNameSpace.ToLower());
@@ -266,15 +337,25 @@ namespace UFrame
         }
 
 
-        public void DoCodeGuard(string dllPath,string outputPath)
+        public void DoCodeGuard(string dllPath, string outputPath)
         {
+            if (!System.IO.File.Exists(dllPath))
+            {
+                Debug.LogError("dll not exits:" + dllPath);
+                return;
+            }
             float progress = 0.0f;
             EditorUtility.DisplayProgressBar("CodeGuard", "Obfuscating and protecting code...", progress);
             CodeGuardSetup setup = CodeGuard.CodeGuardSetupSettings();
             setup.obfuscateProperties = false;
-            setup.obfuscatePrivateMembers = true;
+            setup.obfuscatePrivateMembers = false;
+            setup.obfuscateTypeFields = true;
             setup.obfuscatePrivateFieldsAndProperties = true;
-            setup.obfuscateMethodParameters = true;
+            setup.obfuscateMethodParameters = false;
+            setup.proxyUnityMethods = true;
+            setup.proxyExcludedMethods = true;
+            setup.proxyCustomMethods = false;
+            setup.obfuscateCustomMethods = false;
             setup.skipFieldsWithSerializeFieldAttribute = true;
             setup.skipUnityTypesPublicFields = true;
             setup.skipUnityTypesPublicStaticFields = true;
@@ -283,8 +364,8 @@ namespace UFrame
             setup.obfuscateTypeFieldsAggressively = false;
             setup.typeSelectionMode = 0;
             setup.AddAssembly(dllPath);
+            System.IO.Directory.CreateDirectory(outputPath);
             setup.outputDirectory = outputPath;
-            System.IO.Directory.CreateDirectory(setup.outputDirectory);
             setup.AddAssemblySearchDirectory($"Library/ScriptAssemblies");
             progress = 0.25f;
             EditorUtility.DisplayProgressBar("CodeGuard", "Obfuscating and protecting code...", progress);

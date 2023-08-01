@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using UnityEngine;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class FileTextLoader : ITextLoader
     {

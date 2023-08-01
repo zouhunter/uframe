@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public interface ITableDecoder
     {

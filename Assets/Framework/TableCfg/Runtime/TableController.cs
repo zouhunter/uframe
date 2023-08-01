@@ -9,7 +9,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class TableController : ITableController
     {

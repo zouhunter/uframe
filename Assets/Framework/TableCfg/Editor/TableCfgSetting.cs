@@ -4,9 +4,8 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using System;
-using UnityEngine.UIElements;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class TableCfgSetting : ScriptableObject
     {
@@ -18,7 +17,7 @@ namespace Jagat.TableCfg
         [SettingsProvider]
         public static SettingsProvider VersionSetting()
         {
-            var provider = new SettingsProvider("Project/Jagat/Table Config", SettingsScope.Project);
+            var provider = new SettingsProvider("Project/UFrame/Table Config", SettingsScope.Project);
             provider.label = "Table Config";
             provider.guiHandler = Instance.OnGUILayout;
             provider.deactivateHandler = Instance.OnDeactive;

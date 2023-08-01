@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public abstract class ProxyTable<Proxy> : IProxyTable where Proxy : ProxyTable<Proxy>, new()
     {

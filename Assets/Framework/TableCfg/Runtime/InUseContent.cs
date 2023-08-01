@@ -10,7 +10,7 @@ using System.Collections;
 using System;
 using System.IO;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public abstract class InUseContent : IDisposable
     {

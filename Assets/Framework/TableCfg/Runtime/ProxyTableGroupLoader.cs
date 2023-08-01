@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 
-namespace Jagat.TableCfg
+namespace UFrame.TableCfg
 {
     public class ProxyTableGroupLoader
     {
