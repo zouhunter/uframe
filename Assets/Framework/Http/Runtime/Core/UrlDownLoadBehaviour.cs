@@ -11,7 +11,7 @@ using System.Collections;
 
 namespace UFrame
 {
-    [AddComponentMenu("Jagat/Component/UrlDownLoadBehaviour")]
+    [AddComponentMenu("UFrame/Component/UrlDownLoadBehaviour")]
     public class UrlDownLoadBehaviour : MonoBehaviour
     {
         [SerializeField]

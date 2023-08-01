@@ -9,15 +9,15 @@ namespace UFrame.Editors
         [SettingsProvider]
         public static SettingsProvider CreateProjectMenu()
         {
-            var provider = new SettingsProvider("Project/Jagat", SettingsScope.Project)
+            var provider = new SettingsProvider("Project/UFrame", SettingsScope.Project)
             {
-                label = "Jagat",
+                label = "UFrame",
                 guiHandler = (searchContext) =>
                 {
                     GUILayout.Space(10);
                     GUILayout.FlexibleSpace();
                 },
-                keywords = new HashSet<string>(new[] { "Jagat" })
+                keywords = new HashSet<string>(new[] { "UFrame" })
             };
             return provider;
         }

@@ -1,0 +1,19 @@
+{
+    "name": "UFrame.TableCfg.Editors",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3ae80935e0f4f634d8c098ad10b838ee",
+        "GUID:21e596de189ae8943ab7e372af342d28"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

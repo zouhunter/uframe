@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("Jagat.DressAssetBundle.Browsser")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("UFrame.DressAssetBundle.Browsser")]
 
 namespace UFrame.DressAB.Browser
 {
