@@ -6,6 +6,8 @@ using System.IO;
 using UnityEditor.Compilation;
 using System.Linq;
 using System.Collections.Generic;
+using ApshaiArts.CodeGuard;
+using static UnityEditor.EditorApplication;
 
 namespace UFrame
 {
@@ -214,9 +216,25 @@ namespace UFrame
                 var errorCount = compilerMessages.Count(m => m.type == CompilerMessageType.Error);
                 Debug.LogFormat("Assembly build finished for {0}", assemblyPath);
                 Debug.LogFormat("Warnings: {0} - Errors: {1}", warningCount, errorCount);
-                Application.OpenURL(new System.Uri(System.IO.Path.GetDirectoryName(builder.assemblyPath)).AbsoluteUri);
+                EditorApplication.delayCall +=()=> {
+                    if (obj.encrypt)
+                    {
+                        var outputDir = $"{System.Environment.CurrentDirectory }/{obj.exportPath}/encrypted-dlls/{target}";
+                        DoCodeGuard(builder.assemblyPath, outputDir);
+                        ShowDir(outputDir);
+                    }
+                    else
+                    {
+                        ShowDir(Path.GetDirectoryName(builder.assemblyPath));
+                    }
+                };
             };
             builder.Build();
+        }
+
+        private void ShowDir(string dir)
+        {
+            Application.OpenURL(new System.Uri(dir).AbsoluteUri);
         }
 
         private void BuildCodeAll()
@@ -246,5 +264,33 @@ namespace UFrame
             }
             EditorUtility.ClearProgressBar();
         }
+
+
+        public void DoCodeGuard(string dllPath,string outputPath)
+        {
+            float progress = 0.0f;
+            EditorUtility.DisplayProgressBar("CodeGuard", "Obfuscating and protecting code...", progress);
+            CodeGuardSetup setup = CodeGuard.CodeGuardSetupSettings();
+            setup.obfuscateProperties = false;
+            setup.obfuscatePrivateMembers = true;
+            setup.obfuscatePrivateFieldsAndProperties = true;
+            setup.obfuscateMethodParameters = true;
+            setup.skipFieldsWithSerializeFieldAttribute = true;
+            setup.skipUnityTypesPublicFields = true;
+            setup.skipUnityTypesPublicStaticFields = true;
+            setup.symbolRenamingModeLatin = true;
+            setup.symbolRenamingModeUnreadableLite = false;
+            setup.obfuscateTypeFieldsAggressively = false;
+            setup.typeSelectionMode = 0;
+            setup.AddAssembly(dllPath);
+            setup.outputDirectory = outputPath;
+            System.IO.Directory.CreateDirectory(setup.outputDirectory);
+            setup.AddAssemblySearchDirectory($"Library/ScriptAssemblies");
+            progress = 0.25f;
+            EditorUtility.DisplayProgressBar("CodeGuard", "Obfuscating and protecting code...", progress);
+            setup.Run();
+            EditorUtility.ClearProgressBar();
+        }
+
     }
 }
