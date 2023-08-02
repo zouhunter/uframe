@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp-Editor:UFrame:CodeExportObject
   exportPath: Export
   sourceNameSpace: UFrame
-  exportNameSpace: Foundation
-  encrypt: 1
+  exportNameSpace: Jagat
+  encryptDll: 1
   buildInfos:
   - dirName: DressAB
     additionalDefines: 
@@ -31,7 +31,7 @@ MonoBehaviour:
     active: 1
   - dirName: Scripting
     additionalDefines: 
-    active: 1
+    active: 0
   - dirName: Storage
     additionalDefines: 
     active: 0

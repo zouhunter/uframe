@@ -27,6 +27,7 @@ namespace UFrame
         {
             public string name;
             public string[] includePlatforms;
+            public string[] references;
         }
 
         [System.Serializable]
@@ -76,7 +77,7 @@ namespace UFrame
             {
                 BuildCode(path);
                 var targetFolder = $"{System.Environment.CurrentDirectory }/{obj.exportPath}/{moduleName}";
-                BuildDll(targetFolder, moduleName, EditorUserBuildSettings.activeBuildTarget);
+                BuildDlls(targetFolder, moduleName, EditorUserBuildSettings.activeBuildTarget);
             }
             var defineRect = new Rect(rect.x + 100, rect.y + 2, rect.width - 230, rect.height - 4);
             var info = obj.buildInfos.Find(x => x.dirName == moduleName);
@@ -122,93 +123,181 @@ namespace UFrame
             }
         }
 
-        private void BuildDll(string path, string moduleName, BuildTarget target)
+        private string[] SortAsmFiles(CodeExportObject.AsmInfo[] asmFiles)
         {
-            var files = new List<string>();
-            CollectFiles("*.cs", path, files, true);
-            if (files.Count == 0)
+            List<string> asmNames = new List<string>();
+            foreach (var item in asmFiles)
             {
-                Debug.LogError("empty runtime dir:" + path);
-                return;
+                if(item.references == null || item.references.Length == 0)
+                {
+                    asmNames.Insert(0, item.name);
+                }
+                else
+                {
+                    var index = asmNames.Count;
+                    foreach (var guidStr in item.references)
+                    {
+                        var guid = guidStr.Substring(5);
+                        var path = AssetDatabase.GUIDToAssetPath(guid);
+                        var subInfo = JsonUtility.FromJson<CodeExportObject.AsmInfo>(System.IO.File.ReadAllText(path));
+                        for (int i = 0; i < asmNames.Count; i++)
+                        {
+                            if(subInfo.name == asmNames[i])
+                            {
+                                index = i + 1;
+                            }
+                        }
+                    }
+                    if(index == asmNames.Count)
+                    {
+                        asmNames.Add(item.name);
+                    }
+                    else
+                    {
+                        asmNames.Insert(index,item.name);
+                    }
+                }
             }
-            string[] csfiles = files.ToArray();
+            return asmNames.ToArray();
+        }
+
+        private void BuildDlls(string path, string moduleName, BuildTarget target)
+        {
+            var filesMap = new Dictionary<string, string[]>();
             var output = $"{System.Environment.CurrentDirectory}/{obj.exportPath}/dlls/{target}";
             System.IO.Directory.CreateDirectory(output);
             var defineFiles = System.IO.Directory.GetFiles(path, "*.asmdef", SearchOption.AllDirectories);
+            List<CodeExportObject.AsmInfo> asmInfos = new List<CodeExportObject.AsmInfo>();
             foreach (var item in defineFiles)
             {
                 var info = JsonUtility.FromJson<CodeExportObject.AsmInfo>(System.IO.File.ReadAllText(item));
-                if (info.includePlatforms != null && System.Array.Find(info.includePlatforms, x => x == "Editor") == null)
+                var files = new List<string>();
+                CollectAssemblyScripts(true, System.IO.Path.GetDirectoryName(item), files);
+                if (files.Count > 0)
                 {
-                    moduleName = info.name;
-                    break;
+                    filesMap[info.name] = files.ToArray();
+                    asmInfos.Add(info);
                 }
             }
-            var assembilyPath = $"{output}/{moduleName}.dll";
-            var builder = new AssemblyBuilder(assembilyPath, csfiles);
-            builder.buildTarget = target;
+            var names = SortAsmFiles(asmInfos.ToArray());
             var buildInfo = obj.buildInfos.Find(x => x.dirName == moduleName);
-            if (buildInfo != null && buildInfo.additionalDefines != null && buildInfo.additionalDefines.Length > 0)
+            foreach (var dllName in names)
             {
-                builder.additionalDefines = buildInfo.additionalDefines?.Split(new char[] { '|', ';', ',' });
+                var assembilyPath = $"{output}/{dllName}.dll";
+                var builder = new AssemblyBuilder(assembilyPath, filesMap[dllName]);
+                builder.buildTarget = target;
+                if (buildInfo != null && buildInfo.additionalDefines != null && buildInfo.additionalDefines.Length > 0)
+                {
+                    builder.additionalDefines = buildInfo.additionalDefines?.Split(new char[] { '|', ';', ',' });
+                }
+                StartBuild(builder);
             }
-            StartBuild(builder);
         }
 
         private void BuildCode(string path)
         {
-            BuildCodeByPath(path,false);
+            BuildCodeByPath(path, false);
         }
 
-        private void CollectFiles(string flags,string dir, List<string> files, bool ignoreEditor)
+
+        private void CollectAssemblyScripts(bool top, string dir, List<string> files)
         {
-            if (ignoreEditor)
+            if (!top)
             {
                 var defineFiles = Directory.GetFiles(dir, "*.asmdef", SearchOption.TopDirectoryOnly);
-                foreach (var item in defineFiles)
-                {
-                    if (item.EndsWith("Editor"))
-                        return;
-
-                    var info = JsonUtility.FromJson<CodeExportObject.AsmInfo>(System.IO.File.ReadAllText(item));
-                    if (info.includePlatforms != null && System.Array.Find(info.includePlatforms, x => x == "Editor") != null)
-                    {
-                        return;
-                    }
-                }
+                if (defineFiles.Length > 0)
+                    return;
             }
 
 
-            var topFiles = System.IO.Directory.GetFiles(dir, flags, SearchOption.TopDirectoryOnly);
+            var topFiles = System.IO.Directory.GetFiles(dir, "*.cs", SearchOption.TopDirectoryOnly);
             files.AddRange(topFiles);
 
             var dirs = System.IO.Directory.GetDirectories(dir, "*", SearchOption.TopDirectoryOnly);
             foreach (var subDir in dirs)
             {
-                CollectFiles(flags,subDir, files, ignoreEditor);
+                CollectAssemblyScripts(false, subDir, files);
+            }
+        }
+        private void CollectFileIgnoreMeta(string dir, List<string> files)
+        {
+            var topFiles = System.IO.Directory.GetFiles(dir, "*", SearchOption.TopDirectoryOnly);
+            foreach (var item in topFiles)
+            {
+                if (item.EndsWith(".meta"))
+                    continue;
+                files.Add(item);
+            }
+
+            var dirs = System.IO.Directory.GetDirectories(dir, "*", SearchOption.TopDirectoryOnly);
+            foreach (var subDir in dirs)
+            {
+                CollectFileIgnoreMeta(subDir, files);
+            }
+        }
+
+        private bool CheckIsEditorAssembly(string asmPath)
+        {
+            var editorAssembly = false;
+            if (System.IO.Path.GetDirectoryName(asmPath).EndsWith("Editor"))
+                editorAssembly = true;
+
+            var info = JsonUtility.FromJson<CodeExportObject.AsmInfo>(System.IO.File.ReadAllText(asmPath));
+            if (info.includePlatforms != null && System.Array.Find(info.includePlatforms, x => x == "Editor") != null)
+                editorAssembly = true;
+            return editorAssembly;
+        }
+
+        private void CollectCSharpFiles(string flags, string dir, List<string> files, bool editor)
+        {
+            var defineFiles = Directory.GetFiles(dir, "*.asmdef", SearchOption.TopDirectoryOnly);
+            foreach (var item in defineFiles)
+            {
+                var editorAssembly = CheckIsEditorAssembly(item);
+                if (editor == editorAssembly)
+                {
+                    var topFiles = System.IO.Directory.GetFiles(dir, flags, SearchOption.TopDirectoryOnly);
+                    files.AddRange(topFiles);
+                }
+            }
+            var dirs = System.IO.Directory.GetDirectories(dir, "*", SearchOption.TopDirectoryOnly);
+            foreach (var subDir in dirs)
+            {
+                CollectCSharpFiles(flags, subDir, files, editor);
             }
         }
 
         private void BuildDllAll(BuildTarget target)
         {
             var sourceFolder = $"{System.Environment.CurrentDirectory }/{obj.exportPath}";
-            var files = new List<string>();
-            CollectFiles("*.cs",sourceFolder, files, true);
-            if(files.Count == 0)
-            {
-                Debug.LogError("empty cs!");
-                return;
-            }
-            string[] csfiles = files.ToArray();
+            var runtimeFiles = new List<string>();
+            var editorFiles = new List<string>();
+            CollectCSharpFiles("*.cs", sourceFolder, runtimeFiles, false);
+            CollectCSharpFiles("*.cs", sourceFolder, editorFiles, true);
+
             var output = $"{System.Environment.CurrentDirectory}/{obj.exportPath}/dlls/{target}";
             Directory.CreateDirectory(output);
-            var assembilyPath = $"{output}/{obj.exportNameSpace}.dll";
-            var builder = new AssemblyBuilder(assembilyPath, csfiles);
+
+            if (runtimeFiles.Count > 0)
+            {
+                BuildAllDll(output, target, obj.exportNameSpace, runtimeFiles.ToArray());
+            }
+
+            if (editorFiles.Count > 0)
+            {
+                BuildAllDll(output, target, obj.exportNameSpace + ".Editors", editorFiles.ToArray());
+            }
+        }
+
+        private void BuildAllDll(string output, BuildTarget target, string dllName, string[] csFiles)
+        {
+            var assembilyPath = $"{output}/{dllName}.dll";
+            var builder = new AssemblyBuilder(assembilyPath, csFiles);
             builder.buildTarget = target;
             var defines = new List<string>();
             foreach (var item in obj.buildInfos)
             {
-                if(item.active && !string.IsNullOrEmpty(item.additionalDefines))
+                if (item.active && !string.IsNullOrEmpty(item.additionalDefines))
                 {
                     var itemInfos = item.additionalDefines?.Split(new char[] { '|', ';', ',' });
                     if (itemInfos != null && itemInfos.Length > 0)
@@ -217,7 +306,7 @@ namespace UFrame
                     }
                 }
             }
-            if(defines.Count > 0)
+            if (defines.Count > 0)
             {
                 Debug.LogError(defines.Count);
                 builder.additionalDefines = defines.ToArray();
@@ -227,6 +316,20 @@ namespace UFrame
 
         private void StartBuild(AssemblyBuilder builder)
         {
+            var additionalReferences = new List<string>();
+            var dlls = System.IO.Directory.GetFiles(System.IO.Path.GetFullPath("Library/ScriptAssemblies"), "*.dll");
+            additionalReferences.AddRange(dlls);
+            var exePath = System.IO.Path.GetDirectoryName(System.Environment.GetCommandLineArgs()[0]);
+            dlls = System.IO.Directory.GetFiles($"{exePath}/Data/Managed", "*.dll");
+            additionalReferences.AddRange(dlls);
+            var output = $"{System.Environment.CurrentDirectory}/{obj.exportPath}/dlls/{builder.buildTarget}";
+            dlls = Directory.GetFiles(output, "*.dll");
+            additionalReferences.AddRange(dlls);
+            foreach (var item in additionalReferences)
+            {
+                Debug.LogWarning(item);
+            }
+            builder.additionalReferences = additionalReferences.ToArray();
             // Called on main thread
             builder.buildStarted += delegate (string assemblyPath)
             {
@@ -271,6 +374,8 @@ namespace UFrame
                 };
             };
             builder.Build();
+            while (builder.status != AssemblyBuilderStatus.Finished)
+                System.Threading.Thread.Sleep(10);
         }
 
         private void ShowDir(string dir)
@@ -299,10 +404,10 @@ namespace UFrame
                     }
                 }
             }
-            BuildCodeByPath(sourceDir,true);
+            BuildCodeByPath(sourceDir, true);
         }
 
-        private void BuildCodeByPath(string path,bool top)
+        private void BuildCodeByPath(string path, bool top)
         {
             List<string> files = new List<string>();
             if (top)
@@ -314,13 +419,13 @@ namespace UFrame
                     var info = obj.buildInfos.Find(x => x.dirName == dirName);
                     if (info == null || info.active)
                     {
-                        CollectFiles("*", item, files, false);
+                        CollectFileIgnoreMeta(item, files);
                     }
                 }
             }
             else
             {
-                CollectFiles("*", path, files, false);
+                CollectFileIgnoreMeta(path, files);
             }
             var counter = 0;
             float countAll = files.Count;
@@ -344,7 +449,6 @@ namespace UFrame
             EditorUtility.ClearProgressBar();
             ShowDir(targetFolder);
         }
-
 
         public void DoCodeGuard(string dllPath, string outputPath)
         {
@@ -376,9 +480,12 @@ namespace UFrame
             System.IO.Directory.CreateDirectory(outputPath);
             setup.outputDirectory = outputPath;
             setup.AddAssemblySearchDirectory($"Library/ScriptAssemblies");
+            var exePath = System.IO.Path.GetDirectoryName(System.Environment.GetCommandLineArgs()[0]);
+            setup.AddAssemblySearchDirectory($"{exePath}/Data/Managed");
+            setup.AddAssemblySearchDirectory($"{exePath}/Data/Managed/UnityEngine");
             progress = 0.25f;
             EditorUtility.DisplayProgressBar("CodeGuard", "Obfuscating and protecting code...", progress);
-            setup.Run();
+            //setup.Run();
             EditorUtility.ClearProgressBar();
         }
 
