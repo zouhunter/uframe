@@ -51,15 +51,32 @@ namespace UFame.Storage
             m_changedInfos = new HashSet<StorageInfo>();
         }
 
-        public void Init(string name)
+        public void InitByName(string name)
         {
             try
             {
-                DecodeFromFile(name);
+                var dir = $"{Application.persistentDataPath}/{storageDirName}";
+                System.IO.Directory.CreateDirectory(dir);
+                DecodeFromFile($"{dir}/{name}.bytes");
             }
             catch (System.Exception e)
             {
                 Debug.Log("failed decode user data:" + name);
+                Debug.LogException(e);
+            }
+            m_changedInfos.Clear();
+        }
+        public void InitByPath(string filePath)
+        {
+            try
+            {
+                var dir = System.IO.Path.GetDirectoryName(filePath);
+                System.IO.Directory.CreateDirectory(dir);
+                DecodeFromFile(filePath);
+            }
+            catch (System.Exception e)
+            {
+                Debug.Log("failed decode user data:" + filePath);
                 Debug.LogException(e);
             }
             m_changedInfos.Clear();
@@ -72,16 +89,10 @@ namespace UFame.Storage
             infos?.Clear();
         }
 
-        private string GetStoragePath(string userid)
-        {
-            var dir = $"{Application.persistentDataPath}/{storageDirName}";
-            System.IO.Directory.CreateDirectory(dir);
-            return $"{dir}/{userid}.bytes";
-        }
 
-        private void DecodeFromFile(string userid)
+        private void DecodeFromFile(string path)
         {
-            m_currentStoragePath = GetStoragePath(userid);
+            m_currentStoragePath = path;
             if (File.Exists(m_currentStoragePath))
             {
                 infos.Clear();
