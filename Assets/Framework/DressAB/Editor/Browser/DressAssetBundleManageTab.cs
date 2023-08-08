@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
-namespace UFrame.DressAB.Browser
+namespace UFrame.DressAssetBundle.Browser
 {
     [System.Serializable]
     internal class DressAssetBundleManageTab 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.IMGUI.Controls;
 
-namespace UFrame.DressAB.Browser.AssetBundleDataSource
+namespace UFrame.DressAssetBundle.Browser.AssetBundleDataSource
 {
     internal class DressAssetBundleDataSource : ABDataSource
     {

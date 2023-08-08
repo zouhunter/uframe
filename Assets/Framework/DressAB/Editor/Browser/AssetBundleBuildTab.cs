@@ -3,9 +3,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using UFrame.DressAB.Browser.AssetBundleDataSource;
+using UFrame.DressAssetBundle.Browser.AssetBundleDataSource;
 
-namespace UFrame.DressAB.Browser
+namespace UFrame.DressAssetBundle.Browser
 {
     [System.Serializable]
     internal class AssetBundleBuildTab

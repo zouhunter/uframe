@@ -12,7 +12,7 @@ using System;
 using Object = UnityEngine.Object;
 using UnityEditorInternal;
 
-namespace UFrame.DressAB.Editors
+namespace UFrame.DressAssetBundle.Editors
 {
     [InitializeOnLoad]
     internal static class AssetAddressGUI

@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace UFrame.DressAB
+namespace UFrame.DressAssetBundle
 {
     public class AddressDefineObject : ScriptableObject
     {

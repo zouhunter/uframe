@@ -7,7 +7,7 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
 
-namespace UFrame.DressAB {
+namespace UFrame.DressAssetBundle {
 
     [System.Serializable]
     public class AddressInfo

@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using System.IO;
 
-namespace UFrame.DressAB.Browser
+namespace UFrame.DressAssetBundle.Browser
 {
     class SingleBundleInspector
     {

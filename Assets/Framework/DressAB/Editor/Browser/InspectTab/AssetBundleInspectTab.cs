@@ -6,7 +6,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Linq;
 
-namespace UFrame.DressAB.Browser
+namespace UFrame.DressAssetBundle.Browser
 {
     [System.Serializable]
     internal class AssetBundleInspectTab

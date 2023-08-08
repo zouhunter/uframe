@@ -1,10 +1,10 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
-using UFrame.DressAB.Browser.Models;
+using UFrame.DressAssetBundle.Browser.Models;
 using UnityEditor.IMGUI.Controls;
 
-namespace UFrame.DressAB.Browser
+namespace UFrame.DressAssetBundle.Browser
 {
     internal class BundleDetailItem : TreeViewItem
     {

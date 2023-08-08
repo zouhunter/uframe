@@ -3,7 +3,7 @@ using UnityEditor.IMGUI.Controls;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UFrame.DressAB.Browser
+namespace UFrame.DressAssetBundle.Browser
 {
 	internal class InspectTreeItem : TreeViewItem
 	{

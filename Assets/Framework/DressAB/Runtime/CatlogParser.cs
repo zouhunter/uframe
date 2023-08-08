@@ -7,7 +7,7 @@
 using System.IO;
 using System.Collections.Generic;
 
-namespace UFrame.DressAB
+namespace UFrame.DressAssetBundle
 {
     public class CatlogParser : System.IDisposable
     {

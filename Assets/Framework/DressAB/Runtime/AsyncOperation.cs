@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 
-namespace UFrame.DressAB
+namespace UFrame.DressAssetBundle
 {
     public class AsyncOperation<T> : IDisposable, IEnumerator where T : AsyncOperation<T>
     {

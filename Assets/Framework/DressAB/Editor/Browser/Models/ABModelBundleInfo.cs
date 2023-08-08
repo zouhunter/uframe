@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.IMGUI.Controls;
 
-namespace UFrame.DressAB.Browser.Models
+namespace UFrame.DressAssetBundle.Browser.Models
 {
     internal sealed class BundleTreeItem : TreeViewItem
     {   

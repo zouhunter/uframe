@@ -6,7 +6,7 @@ using System.Linq;
 //using System;
 
 
-namespace UFrame.DressAB.Browser
+namespace UFrame.DressAssetBundle.Browser
 {
     internal class AssetListTree : TreeView
     {

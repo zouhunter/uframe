@@ -9,7 +9,7 @@ using UnityEditor;
 using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine;
-namespace UFrame.DressAB
+namespace UFrame.DressAssetBundle
 {
     public class SimulateAddressLoader
     {
@@ -49,18 +49,14 @@ namespace UFrame.DressAB
                     var path = AssetDatabase.GUIDToAssetPath(info.guid);
                     if (System.IO.Directory.Exists(path))
                     {
-                        var files = System.IO.Directory.GetFiles(path, "*");
+                        var files = System.IO.Directory.GetFiles(path, "*",System.IO.SearchOption.AllDirectories);
                         foreach (var file in files)
                         {
                             if (file.EndsWith(".meta"))
                                 continue;
-
-                            var fileName = System.IO.Path.GetFileName(file);
-                            var fileNameNoExt = System.IO.Path.GetFileNameWithoutExtension(file);
-                            if (fileName == assetName || assetName == fileNameNoExt)
-                            {
+                            var reletiveFile = System.IO.Path.GetRelativePath(path,file).Replace('\\', '/');
+                            if (reletiveFile == assetName || reletiveFile.Contains(assetName + "."))
                                 return System.IO.Path.GetRelativePath(System.Environment.CurrentDirectory, file);
-                            }
                         }
                     }
                 }
@@ -116,9 +112,31 @@ namespace UFrame.DressAB
                     var assetPath = AssetDatabase.GUIDToAssetPath(item.guid);
                     if (!string.IsNullOrEmpty(assetPath))
                     {
-                        var asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
-                        if (asset)
-                            objs.Add(asset);
+                        if(System.IO.Directory.Exists(assetPath))
+                        {
+                            var files = System.IO.Directory.GetFiles(assetPath,"*",System.IO.SearchOption.AllDirectories);
+                            foreach (var filePath in files)
+                            {
+                                if (filePath.EndsWith(".meta"))
+                                    continue;
+                                var relPath = System.IO.Path.GetRelativePath(System.Environment.CurrentDirectory, filePath);
+                                var asset = AssetDatabase.LoadAssetAtPath<T>(relPath);
+                                if(asset)
+                                    objs.Add(asset as T);
+                            }
+                        }
+                        else
+                        {
+                            var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
+                            if (assets != null && assets.Length > 0)
+                            {
+                                foreach (var asset in assets)
+                                {
+                                    if (asset is T)
+                                        objs.Add(asset as T);
+                                }
+                            }
+                        }
                     }
                 }
 

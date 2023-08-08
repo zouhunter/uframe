@@ -4,7 +4,7 @@
 //* 描    述： make sure catlog is latest
 
 //* ************************************************************************************
-namespace UFrame.DressAB
+namespace UFrame.DressAssetBundle
 {
     public class CatlogCheckUpdater
     {

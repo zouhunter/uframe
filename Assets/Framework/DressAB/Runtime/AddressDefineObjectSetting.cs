@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 
-namespace UFrame.DressAB {
+namespace UFrame.DressAssetBundle {
 
     [FilePath("ProjectSettings/AddressDefineObjectSetting.asset",FilePathAttribute.Location.ProjectFolder)]
     public class AddressDefineObjectSetting : ScriptableObject

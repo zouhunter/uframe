@@ -11,7 +11,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace UFrame.DressAB.Editors
+namespace UFrame.DressAssetBundle.Editors
 {
     public class AddressABBuilder
     {
@@ -96,7 +96,7 @@ namespace UFrame.DressAB.Editors
                     }
                     else
                     {
-                        configItem = new UFrame.DressAB.AddressInfo();
+                        configItem = new UFrame.DressAssetBundle.AddressInfo();
                         configItem.guid = guid;
                         configItem.address = address;
                         configItem.active = true;

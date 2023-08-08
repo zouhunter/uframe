@@ -1,7 +1,7 @@
 //*************************************************************************************
-//* ï¿½ï¿½    ï¿½ß£ï¿½ zouhunter
-//* ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä£º 2023-05-22
-//* ï¿½ï¿½    ï¿½ï¿½ï¿½ï¿½
+//* ×÷    Õß£º zouhunter
+//* ´´½¨Ê±¼ä£º 2023-05-22
+//* Ãè    Êö£º
 
 //* ************************************************************************************
 using UnityEngine;
@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using UnityEditorInternal;
 using System.Reflection;
 
-namespace UFrame.DressAB.Editors
+namespace UFrame.DressAssetBundle.Editors
 {
     public class BundleBuildCollector
     {
@@ -42,7 +42,8 @@ namespace UFrame.DressAB.Editors
 
                 if (item.split && System.IO.Directory.Exists(assetPath))
                 {
-                    var entries = System.IO.Directory.GetFileSystemEntries(assetPath, "*", SearchOption.TopDirectoryOnly);
+                    var entries = System.IO.Directory.GetFiles(assetPath, "*", SearchOption.AllDirectories);
+
                     foreach (var entr in entries)
                     {
                         if (entr.EndsWith(".meta"))
