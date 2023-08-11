@@ -1,5 +1,6 @@
-# uframe
+# uframe (https://gitee.com/zouhunter/uframe)
 extendable unity game framework,easy and powerfall
+
 
 ## - LitUI (https://github.com/zouhunter/uframe.git?path=Assets/Framework/LitUI)
         event Action<UIInfo> onUIOpenEvent;
