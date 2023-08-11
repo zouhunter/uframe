@@ -9,15 +9,15 @@ using UnityEditor;
 using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine;
-namespace UFrame.DressAssetBundle
+namespace UFrame.DressAB
 {
     public class SimulateAddressLoader
     {
         private AddressDefineObject m_defObj;
         private BindingFlags m_callMethodFlags = BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
-        public SimulateAddressLoader()
+        public SimulateAddressLoader(AddressDefineObject defineObj = null)
         {
-            m_defObj = AddressDefineObjectSetting.Instance.activeAddressDefineObject;
+            m_defObj = defineObj ?? AddressDefineObjectSetting.Instance.activeAddressDefineObject;
         }
 
         public bool ExistsAddress(string address)
@@ -27,12 +27,21 @@ namespace UFrame.DressAssetBundle
             return m_defObj.addressList.Find(x => x.address == address) != null;
         }
 
-        private string LocatAddressInfo(string address, ushort flags)
+        private string LocatScenePath(string address, ushort flags)
         {
-            return LocatFile(address, null, flags);
+            var entryPath = LocatAddressPath(address, null, flags);
+            if(!string.IsNullOrEmpty(entryPath) && System.IO.Directory.Exists(entryPath))
+            {
+                var files = System.IO.Directory.GetFiles(entryPath, "*.unity", System.IO.SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    return System.IO.Path.GetRelativePath(System.Environment.CurrentDirectory, file);
+                }
+            }
+            return entryPath;
         }
 
-        private string LocatFile(string address, string assetName, ushort flags)
+        private string LocatAddressPath(string address, string assetName, ushort flags)
         {
             if (m_defObj == null)
                 return null;
@@ -56,7 +65,9 @@ namespace UFrame.DressAssetBundle
                                 continue;
                             var reletiveFile = System.IO.Path.GetRelativePath(path,file).Replace('\\', '/');
                             if (reletiveFile == assetName || reletiveFile.Contains(assetName + "."))
+                            {
                                 return System.IO.Path.GetRelativePath(System.Environment.CurrentDirectory, file);
+                            }
                         }
                     }
                 }
@@ -81,10 +92,14 @@ namespace UFrame.DressAssetBundle
 
         public AsyncSceneOperation LoadSceneAsync(string address, ushort flags, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
         {
-            var assetPath = LocatAddressInfo(address, flags);
+            var assetPath = LocatScenePath(address, flags);
             if (!string.IsNullOrEmpty(assetPath))
             {
                 var asset = AssetDatabase.LoadAssetAtPath<SceneAsset>(assetPath);
+                if(!asset)
+                {
+                    Debug.LogError("failed load scene at path:" + assetPath);
+                }
                 var operation = new AsyncSceneOperation(asset.name, loadSceneMode);
                 if (System.Array.FindIndex(EditorBuildSettings.scenes, x => x.path == assetPath) < 0)
                 {
@@ -149,7 +164,7 @@ namespace UFrame.DressAssetBundle
 
         internal AsyncAssetOperation<T> LoadAssetAsync<T>(string address, string assetName, ushort flags) where T : UnityEngine.Object
         {
-            var assetPath = LocatFile(address, assetName, flags);
+            var assetPath = LocatAddressPath(address, assetName, flags);
             if (!string.IsNullOrEmpty(assetPath))
             {
                 var asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);

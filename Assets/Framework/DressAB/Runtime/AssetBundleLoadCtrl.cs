@@ -9,8 +9,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
+using System.Linq;
 
-namespace UFrame.DressAssetBundle
+namespace UFrame.DressAB
 {
     public class AssetBundleLoadCtrl
     {
@@ -20,6 +21,7 @@ namespace UFrame.DressAssetBundle
         public string cacheFolder { get; private set; }
         public bool simulateInEditor { get; set; }
         public ref string assetBundleExt => ref m_bundleExt;
+        public bool syncLoad = false;
         public bool logActive = true;
         private CatlogCheckUpdater m_updateChecker;
         private CatlogParser m_catlogParser;
@@ -31,7 +33,7 @@ namespace UFrame.DressAssetBundle
         private Dictionary<string, List<BundleItem>> m_bundleRefMap;//ref by
         private Dictionary<string, AsyncBundleOperation> m_asyncBundleOperationMap;
 #if UNITY_EDITOR
-        private SimulateAddressLoader m_simulateLoader = new SimulateAddressLoader();
+        public SimulateAddressLoader simulateLoader = new SimulateAddressLoader();
 #endif
         private HashSet<BundleItem> m_deeploading = new HashSet<BundleItem>();
 
@@ -267,8 +269,8 @@ namespace UFrame.DressAssetBundle
             if (!m_downloadingBundles.Contains(bundleName) && (!m_loadedAssetBundles.TryGetValue(bundleName, out var ab) || !ab))
             {
                 m_downloadingBundles.Add(bundleName);
-                DebugInfo("load bundle:" + bundleName);
-                AsyncFileBundleOperation asyncFileBundle = new AsyncFileBundleOperation(filePath, bundleItem);
+                DebugInfo("load bundle from file:" + bundleName);
+                AsyncFileBundleOperation asyncFileBundle = new AsyncFileBundleOperation(filePath, bundleItem, syncLoad);
                 asyncFileBundle.RegistABLoadComplate(OnLoadBundleFinish);
                 asyncFileBundle.StartRequest();
             }
@@ -276,6 +278,7 @@ namespace UFrame.DressAssetBundle
 
         private void OnLoadBundleFinish(BundleItem bundleItem, string filePath, AssetBundle assetBundle)
         {
+            Debug.Log("bundle finish:" + bundleItem.bundleName);
             var bundleName = bundleItem.bundleName;
             if (assetBundle == null)
             {
@@ -311,7 +314,7 @@ namespace UFrame.DressAssetBundle
 #if UNITY_EDITOR
             if (simulateInEditor)
             {
-                return m_simulateLoader.ExistsAddress(address);
+                return simulateLoader.ExistsAddress(address);
             }
 #endif
 
@@ -351,20 +354,30 @@ namespace UFrame.DressAssetBundle
 
         public AsyncPreloadOperation StartPreload(ushort flags)
         {
+            Debug.Log("StartPreload:" + flags);
 #if UNITY_EDITOR
             if (simulateInEditor)
             {
                 return new AsyncPreloadOperation(0);
             }
 #endif
+            HashSet<BundleItem> preloadBundles = new HashSet<BundleItem>();
             var preloads = m_catlogParser?.GetAddressByFlags(flags);
-            var operation = new AsyncPreloadOperation(preloads.Count);
-            if (preloads.Count > 0)
+            for (int i = 0; i < preloads.Count; i++)
+            {
+                var abItem = preloads[i];
+                while (abItem != null && abItem.bundleItem != null)
+                {
+                    preloadBundles.Add(abItem.bundleItem);
+                    abItem = abItem.next;
+                }
+            }
+            var operation = new AsyncPreloadOperation(preloadBundles.Count);
+            if (preloadBundles.Count > 0)
             {
                 m_deeploading.Clear();
-                foreach (var addressItem in preloads)
+                foreach (var abItem in preloadBundles)
                 {
-                    var abItem = addressItem.bundleItem;
                     PreloadAssetBundle(abItem, operation.SetAssetBundle, m_deeploading);
                 }
             }
@@ -440,7 +453,7 @@ namespace UFrame.DressAssetBundle
 #if UNITY_EDITOR
             if (simulateInEditor)
             {
-                return m_simulateLoader.LoadAssetAsync<T>(address, assetname, flags);
+                return simulateLoader.LoadAssetAsync<T>(address, assetname, flags);
             }
 #endif
             var operation = LoadAssetBundleAsync(address, flags);
@@ -458,7 +471,7 @@ namespace UFrame.DressAssetBundle
 #if UNITY_EDITOR
             if (simulateInEditor)
             {
-                return m_simulateLoader.LoadAssetsAsync<T>(address, flags);
+                return simulateLoader.LoadAssetsAsync<T>(address, flags);
             }
 #endif
             var operation = LoadAssetBundleAsync(address, flags);
@@ -476,7 +489,7 @@ namespace UFrame.DressAssetBundle
 #if UNITY_EDITOR
             if (simulateInEditor)
             {
-                return m_simulateLoader.LoadSceneAsync(address, flags, loadSceneMode);
+                return simulateLoader.LoadSceneAsync(address, flags, loadSceneMode);
             }
 #endif
             var operation = LoadAssetBundleAsync(address, flags);
@@ -494,6 +507,7 @@ namespace UFrame.DressAssetBundle
         {
             if (deepLoading.Contains(bundleItem))
                 return;
+            Debug.Log("preload assetbundle:" + bundleItem.bundleName);
             deepLoading.Add(bundleItem);
 
             if (bundleItem.refs != null && bundleItem.refs.Length > 0)
@@ -503,29 +517,30 @@ namespace UFrame.DressAssetBundle
                     PreloadAssetBundle(refItem, onLoadBundle, deepLoading);
                 }
             }
-
             var fullName = $"{bundleItem.bundleName}.{m_bundleExt}";
-            var localFile = $"{cacheFolder}/{fullName}";
-
+            var bundleName = bundleItem.bundleName;
+            var splitIndex = bundleName.LastIndexOf("_");
+            var shortName = bundleName.Substring(0, splitIndex);
+            var localFile = $"{cacheFolder}/{shortName}";
             var fileInfo = new System.IO.FileInfo(localFile);
             if (!fileInfo.Exists || fileInfo.Length == 0)
             {
                 var remoteFile = $"{m_remoteUrl}/{fullName}";
+                Debug.Log("PreloadAssetBundle downloading:" + bundleItem.bundleName);
                 downloadFileFunc?.Invoke(remoteFile, localFile, onLoadBundle, null, null);
             }
             else
             {
+                Debug.Log("PreloadAssetBundle finished:" + bundleItem.bundleName);
                 onLoadBundle?.Invoke(localFile, null);
             }
         }
 
         private void DebugInfo(string message)
         {
-#if DEBUG
             if (!logActive)
                 return;
             UnityEngine.Debug.Log("[AssetBundleLoadCtrl]" + message);
-#endif
         }
     }
 }

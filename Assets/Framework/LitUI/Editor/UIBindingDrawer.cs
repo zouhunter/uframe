@@ -11,6 +11,7 @@ using UnityEditorInternal;
 using Object = UnityEngine.Object;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace UFrame.LitUI
 {
@@ -91,7 +92,7 @@ namespace UFrame.LitUI
                 {
                     objName = objName.Substring(2);
                 }
-                AddElementFromObject(objName, obj != null ? (Object)obj : default(Object));
+                AddElementFromObject(objName, obj != null ? (Object)obj : default(Object),false);
             }
         }
 
@@ -119,7 +120,7 @@ namespace UFrame.LitUI
                 {
                     foreach (var obj in DragAndDrop.objectReferences)
                     {
-                        AddElementFromObject(obj.name, obj);
+                        AddElementFromObject(obj.name, obj,true);
                     }
                 }
             }
@@ -208,7 +209,7 @@ namespace UFrame.LitUI
             }
         }
 
-        private void AddElementFromObject(string objectName, Object obj)
+        private void AddElementFromObject(string objectName, Object obj,bool selectComponent)
         {
             m_refsProp.serializedObject.Update();
             SerializedProperty element = null;
@@ -230,8 +231,59 @@ namespace UFrame.LitUI
             var objProp = element.FindPropertyRelative("obj");
             nameProp.stringValue = objectName;
             if (obj)
+            {
+                if(selectComponent && obj is GameObject)
+                    obj = SelectBestObject(obj as GameObject);
                 objProp.objectReferenceValue = obj;
+            }
             m_refsProp.serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private Object SelectBestObject(GameObject obj)
+        {
+            Object behaviour = obj;
+            var behaviours = obj.GetComponents<Behaviour>();
+            if(behaviours.Length > 0)
+            {
+                bool existSelectable = false;
+                bool existLayout = false;
+                foreach (var item in behaviours)
+                {
+                    if (behaviour == null)
+                    {
+                        behaviour = item;
+                        continue;
+                    }
+
+                    var itemNameSpace = item.GetType().Namespace;
+                    if (!itemNameSpace.StartsWith("UnityEngine"))
+                    {
+                        behaviour = item;
+                        break;
+                    }
+
+                    if(item is UnityEngine.UI.Selectable || item is UnityEngine.EventSystems.IDragHandler)
+                    {
+                        behaviour = item;
+                        existSelectable = true;
+                        continue;
+                    }
+
+                    if (item is ILayoutGroup && !existSelectable)
+                    {
+                        behaviour = item;
+                        existLayout = true;
+                        continue;
+                    }
+
+                    if (item is UnityEngine.UI.Graphic && !existSelectable && !existLayout)
+                    {
+                        behaviour = item;
+                        continue;
+                    }
+                }
+            }
+            return behaviour;
         }
 
         private void OnSelectLine(ReorderableList list)

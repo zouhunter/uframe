@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using UnityEditorInternal;
 using System.Reflection;
 
-namespace UFrame.DressAssetBundle.Editors
+namespace UFrame.DressAB.Editors
 {
     public class BundleBuildCollector
     {
@@ -58,7 +58,7 @@ namespace UFrame.DressAssetBundle.Editors
                         if (!ExistSingleBundleAsset(refPath))
                         {
                             var addressInfo = new AddressInfo();
-                            addressInfo.address = $"{item.address}/{refdress}";
+                            addressInfo.address = $"{item.address}/{refdress.Replace('\\','/')}";
                             addressInfo.flags = item.flags;
                             addressInfo.active = true;
                             addressInfo.split = false;

@@ -25,7 +25,7 @@ namespace UFrame.TableCfg
             return provider;
         }
 
-        public static string settingPath = "ProjectSettings/JagatSettings.asset";
+        public static string settingPath = "ProjectSettings/UFrameSettings.asset";
         private static TableCfgSetting m_instance;
         public static TableCfgSetting Instance
         {

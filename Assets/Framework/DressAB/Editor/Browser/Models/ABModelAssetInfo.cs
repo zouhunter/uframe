@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.IMGUI.Controls;
 
-namespace UFrame.DressAssetBundle.Browser.Models
+namespace UFrame.DressAB.Browser.Models
 {
     internal sealed class AssetTreeItem : TreeViewItem
     {

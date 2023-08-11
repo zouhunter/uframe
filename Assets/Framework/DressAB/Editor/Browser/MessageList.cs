@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace UFrame.DressAssetBundle.Browser
+namespace UFrame.DressAB.Browser
 {
     internal class MessageList
     {

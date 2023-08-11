@@ -39,7 +39,7 @@ namespace UFrame
                 sb.AppendLine($"\t\t[MenuItem(\"{menuName}\")]");
                 sb.AppendLine($"\t\tpublic static void {funcName}()");
                 sb.AppendLine("\t\t{");
-                sb.AppendLine($"\t\t\tJagatEditorTools.InstanceWidget(\"{reletivePath}\");");
+                sb.AppendLine($"\t\t\tUFrameEditorTools.InstanceWidget(\"{reletivePath}\");");
                 sb.AppendLine("\t\t}");
             }
             sb.Append("\t\t#endregion GENERATE_MENUS");

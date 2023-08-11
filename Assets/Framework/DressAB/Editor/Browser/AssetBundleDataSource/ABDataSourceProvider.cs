@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace UFrame.DressAssetBundle.Browser.AssetBundleDataSource
+namespace UFrame.DressAB.Browser.AssetBundleDataSource
 {
     internal class ABDataSourceProviderUtility {
 

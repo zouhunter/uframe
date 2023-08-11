@@ -4,7 +4,7 @@
 //* 描    述： address 地址描述
 
 //* ************************************************************************************
-namespace UFrame.DressAssetBundle
+namespace UFrame.DressAB
 {
     public class AddressItem
     {

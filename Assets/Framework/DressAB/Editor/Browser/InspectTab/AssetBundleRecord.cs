@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UFrame.DressAssetBundle.Browser
+namespace UFrame.DressAB.Browser
 {
     /// <summary>
     /// This class maintains a record of a loaded asset bundle, allowing us

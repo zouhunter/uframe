@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.IMGUI.Controls;
 
-using UFrame.DressAssetBundle.Browser.AssetBundleDataSource;
+using UFrame.DressAB.Browser.AssetBundleDataSource;
 
-namespace UFrame.DressAssetBundle.Browser.Models
+namespace UFrame.DressAB.Browser.Models
 {
     /// <summary>
     /// Static class holding model data for Asset Bundle Browser tool. Data in Model is read from DataSource, but is not pushed.  

@@ -1,11 +1,11 @@
-using UFrame.DressAssetBundle.Browser.AssetBundleDataSource;
+using UFrame.DressAB.Browser.AssetBundleDataSource;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("Jagat.DressAssetBundle.Browsser")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("UFrame.DressAssetBundle.Browsser")]
 
-namespace UFrame.DressAssetBundle.Browser
+namespace UFrame.DressAB.Browser
 {
     public class DressAssetBundleBrowserMain : EditorWindow, IHasCustomMenu, ISerializationCallbackReceiver
     {

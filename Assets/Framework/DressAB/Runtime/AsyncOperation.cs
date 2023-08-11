@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 
-namespace UFrame.DressAssetBundle
+namespace UFrame.DressAB
 {
     public class AsyncOperation<T> : IDisposable, IEnumerator where T : AsyncOperation<T>
     {
@@ -267,7 +267,6 @@ namespace UFrame.DressAssetBundle
         }
     }
 
-
     public class AsyncAssetsOperation<T> : AsyncOperation<AsyncAssetsOperation<T>> where T : UnityEngine.Object
     {
         public T[] assets;
@@ -367,7 +366,7 @@ namespace UFrame.DressAssetBundle
                 {
                     var allAssets = m_bundleOperation.assetBundle.LoadAllAssets<T>();
                     asset = Array.Find(allAssets, x => x.name.ToLower().Contains(m_assetName.ToLower()));
-                    if (!asset)
+                    if (!asset && allAssets.Length > 0)
                     {
                         asset = allAssets[0];
                     }
@@ -535,33 +534,49 @@ namespace UFrame.DressAssetBundle
         public BundleItem bundleItem { get; private set; }
         private AssetBundleCreateRequest request;
         private string filePath;
+        private bool m_forceSync;
 
-        public AsyncFileBundleOperation(string filePath, BundleItem bundleItem)
+        public AsyncFileBundleOperation(string filePath, BundleItem bundleItem,bool forceSync)
         {
             this.filePath = filePath;
             this.bundleItem = bundleItem;
+            this.m_forceSync = forceSync;
         }
 
         public void StartRequest()
         {
-            if (request != null)
+            if (request != null || assetbundle)
                 return;
             try
             {
-                request = AssetBundle.LoadFromFileAsync(filePath);
+                if(m_forceSync)
+                {
+                    assetbundle = AssetBundle.LoadFromFile(filePath);
+                }
+                else
+                {
+                    request = AssetBundle.LoadFromFileAsync(filePath);
+                }
             }
             catch (Exception e)
             {
                 Debug.LogException(e);
             }
-            if (request.isDone)
+            if(m_forceSync)
             {
-                OnLoadBundleFromFile(request.assetBundle);
+                OnLoadBundleFromFile(assetbundle);
             }
-            else
-            {
-                request.completed += OnLoadBundleFromFile;
+            else {
+                if (request.isDone)
+                {
+                    OnLoadBundleFromFile(request.assetBundle);
+                }
+                else
+                {
+                    request.completed += OnLoadBundleFromFile;
+                }
             }
+            
         }
 
         private void OnLoadBundleFromFile(AsyncOperation operation)
@@ -634,7 +649,7 @@ namespace UFrame.DressAssetBundle
             {
                 Debug.LogException(e);
             }
-            if (m_loadedBundles.Count == preloadCount)
+            if (m_loadedBundles.Count >= preloadCount)
             {
                 SetFinish();
             }

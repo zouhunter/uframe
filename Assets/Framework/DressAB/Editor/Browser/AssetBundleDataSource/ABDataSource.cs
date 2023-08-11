@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using System;
 
-namespace UFrame.DressAssetBundle.Browser.AssetBundleDataSource
+namespace UFrame.DressAB.Browser.AssetBundleDataSource
 {
     /// <summary>
     /// Build Info struct used by ABDataSource to pass needed build data around.

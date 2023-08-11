@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace UFrame.DressAssetBundle.Editors
+namespace UFrame.DressAB.Editors
 {
     [CustomEditor(typeof(AddressDefineObject))]
     public class AddressDefineObjectEditor : Editor

@@ -1,7 +1,7 @@
 # uframe
 extendable unity game framework,easy and powerfall
 
-## - LitUI
+## - LitUI (https://github.com/zouhunter/uframe.git?path=Assets/Framework/LitUI)
         event Action<UIInfo> onUIOpenEvent;
         event Action<UIInfo> onUICloseEvent;
         void SetUIRoot(Transform root);
@@ -24,7 +24,7 @@ extendable unity game framework,easy and powerfall
         
         support custom uiloader
 
-## - DressAB
+## - DressAB (https://github.com/zouhunter/uframe.git?path=Assets/Framework/DressAB)
         AsyncPreloadOperation StartPreload(ushort flags);
         AsyncPreloadOperation StartPreload(params string[] address);
         bool ExistAddress(string address);
@@ -36,7 +36,7 @@ extendable unity game framework,easy and powerfall
         AsyncSceneOperation LoadSceneAsync(string address, string sceneName = null, ushort flags = 0, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode = UnityEngine.SceneManagement.LoadSceneMode.Single);
         void PreloadAssetBundle(BundleItem bundleItem, System.Action<string, object> onLoadBundle, HashSet<BundleItem> deepLoading);
 
-## - Manage
+## - Manage (https://github.com/zouhunter/uframe.git?path=Assets/Framework/Manage)
         BaseGameManage<T>
         AgentContext<AgentContainer> : Agent where AgentContainer : AgentContext<AgentContainer>, new()
         Singleton<Agent> : UFrame.Agent where Agent : Singleton<Agent>, new()s

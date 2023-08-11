@@ -5,7 +5,7 @@
 
 //* ************************************************************************************
 
-namespace UFrame.DressAssetBundle {
+namespace UFrame.DressAB {
 
     public delegate void DownloadFileEvent(string url, string localPath, System.Action<string,object> onDownloadFinish,System.Action<float> onProgress,object content);
     public delegate void DownloadTextEvent(string url, System.Action<string, object> onDownloadFinish, object content);
