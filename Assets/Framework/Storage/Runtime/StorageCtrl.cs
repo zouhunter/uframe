@@ -17,6 +17,7 @@ namespace UFame.Storage
         private HashSet<StorageInfo> m_changedInfos;
         private ushort m_minInfoSize = 32;//key+value
         private string m_storageDir = "Storage";
+        private bool m_sourceError;
         public ushort minInfoSize
         {
             get
@@ -96,14 +97,22 @@ namespace UFame.Storage
             if (File.Exists(m_currentStoragePath))
             {
                 infos.Clear();
+                m_sourceError = false;
                 using (var fileStream = new System.IO.FileStream(m_currentStoragePath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite))
                 {
+                    long maxLen = fileStream.Length;
                     fileStream.Seek(0, SeekOrigin.Begin);
                     using (var reader = new BinaryReader(fileStream, System.Text.Encoding.UTF8))
                     {
                         var dataLength = reader.ReadUInt16();
                         for (int i = 0; i < dataLength; i++)
                         {
+                            if (fileStream.Position >= maxLen)
+                            {
+                                Debug.LogError("storage data error!!!");
+                                m_sourceError = true;
+                                break;
+                            }
                             var info = new StorageInfo();
                             info.anchor = fileStream.Position;
                             ReadInfo(reader, info);
@@ -114,9 +123,10 @@ namespace UFame.Storage
                 }
             }
         }
+
         private bool CheckNeedRebuild()
         {
-            bool needRebuild = false;
+            bool needRebuild = m_sourceError;
             foreach (var info in m_changedInfos)
             {
                 var needSize = GetInfoNeedSize(info);
@@ -131,6 +141,7 @@ namespace UFame.Storage
             }
             return needRebuild;
         }
+
         private void SaveToFile()
         {
             if (m_changedInfos.Count == 0)
@@ -144,12 +155,17 @@ namespace UFame.Storage
                 return;
             }
 
+            bool needRebuild = CheckNeedRebuild();
+            if (needRebuild)
+            {
+                System.IO.File.Delete(m_currentStoragePath);
+            }
             using (var fileStream = new System.IO.FileStream(m_currentStoragePath, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite))
             {
                 var bytes = new byte[m_minInfoSize];
                 using (var writer = new BinaryWriter(fileStream, System.Text.Encoding.UTF8))
                 {
-                    if (CheckNeedRebuild())
+                    if (needRebuild)
                     {
                         var dataLen = infos.Count;
                         writer.Write((ushort)dataLen);
@@ -189,6 +205,7 @@ namespace UFame.Storage
             }
             m_changedInfos.Clear();
         }
+
         private void AppendSeat(BinaryWriter writer, byte[] bytes, long sizeLeft)
         {
             while (sizeLeft > 0)
@@ -198,97 +215,99 @@ namespace UFame.Storage
                 sizeLeft -= sizeCharge;
             }
         }
+
         private int GetInfoNeedSize(StorageInfo info)
         {
             var infoSizeNeed = 2;//size
             infoSizeNeed += info.key == null ? 1 : System.Text.Encoding.UTF8.GetBytes(info.key).Length + 2;
             infoSizeNeed += 1;//type
-            if (info.type == 0)//string
+            switch (info.type)
             {
-                infoSizeNeed += info.value == null ? 1 : System.Text.Encoding.UTF8.GetBytes(info.value).Length + 2;
-            }
-            else if (info.type == 1)//int
-            {
-                infoSizeNeed += 4;
-            }
-            else if (info.type == 2)//float
-            {
-                infoSizeNeed += 4;
-            }
-            else if (info.type == 3)//byte
-            {
-                infoSizeNeed += 1;
-            }
-            else if (info.type == 4)//long
-            {
-                infoSizeNeed += 8;
-            }
-            else if (info.type == 5)//double
-            {
-                infoSizeNeed += 8;
+                case DataType.STR:
+                    infoSizeNeed += info.value == null ? 8 : System.Text.Encoding.UTF8.GetBytes(info.value).Length + 2;
+                    break;
+                case DataType.INT:
+                    infoSizeNeed += 4;
+                    break;
+                case DataType.FLOAT:
+                    infoSizeNeed += 4;
+                    break;
+                case DataType.BYTE:
+                    infoSizeNeed += 1;
+                    break;
+                case DataType.LONG:
+                    infoSizeNeed += 8;
+                    break;
+                case DataType.DOUBLE:
+                    infoSizeNeed += 8;
+                    break;
+                default:
+                    break;
             }
             return infoSizeNeed;
         }
+
         private void ReadInfo(BinaryReader reader, StorageInfo info)
         {
             info.size = reader.ReadUInt16();
             info.key = reader.ReadString();
-            info.type = reader.ReadByte();
-            if (info.type == 0)//str
+            info.type = (DataType)reader.ReadByte();
+            switch (info.type)
             {
-                info.value = reader.ReadString();
+                case DataType.STR:
+                    info.value = reader.ReadString();
+                    break;
+                case DataType.INT:
+                    info.value = reader.ReadInt32().ToString();
+                    break;
+                case DataType.FLOAT:
+                    info.value = reader.ReadSingle().ToString();
+                    break;
+                case DataType.BYTE:
+                    info.value = reader.ReadByte().ToString();
+                    break;
+                case DataType.LONG:
+                    info.value = reader.ReadInt64().ToString();
+                    break;
+                case DataType.DOUBLE:
+                    info.value = reader.ReadDouble().ToString();
+                    break;
+                default:
+                    break;
             }
-            else if (info.type == 1)//int
-            {
-                info.value = reader.ReadInt32().ToString();
-            }
-            else if (info.type == 2)//float
-            {
-                info.value = reader.ReadSingle().ToString();
-            }
-            else if (info.type == 3)//byte
-            {
-                info.value = reader.ReadByte().ToString();
-            }
-            else if (info.type == 4)//long
-            {
-                info.value = reader.ReadInt64().ToString();
-            }
-            else if (info.type == 5)//double
-            {
-                info.value = reader.ReadDouble().ToString();
-            }
+            Debug.LogFormat("read:{0} value:{1}", info.key, info.value);
         }
+
         private void WriteInfo(BinaryWriter writer, StorageInfo info)
         {
             writer.Write(info.size);
             writer.Write(info.key);
-            writer.Write(info.type);
-            if (info.type == 0)
+            writer.Write((byte)info.type);
+            switch (info.type)
             {
-                writer.Write(info.value);
-            }
-            else if (info.type == 1)
-            {
-                writer.Write(GetInt(info.value));
-            }
-            else if (info.type == 2)
-            {
-                writer.Write(GetSingle(info.value));
-            }
-            else if (info.type == 3)
-            {
-                writer.Write(GetByte(info.value));
-            }
-            else if (info.type == 4)
-            {
-                writer.Write(GetLong(info.value));
-            }
-            else if (info.type == 5)
-            {
-                writer.Write(GetDouble(info.value));
+                case DataType.STR:
+                    writer.Write(info.value);
+                    break;
+                case DataType.INT:
+                    writer.Write(GetInt(info.value));
+                    break;
+                case DataType.FLOAT:
+                    writer.Write(GetSingle(info.value));
+                    break;
+                case DataType.BYTE:
+                    writer.Write(GetByte(info.value));
+                    break;
+                case DataType.LONG:
+                    writer.Write(GetLong(info.value));
+                    break;
+                case DataType.DOUBLE:
+                    writer.Write(GetDouble(info.value));
+                    break;
+                default:
+                    break;
             }
         }
+
         private int GetInt(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -329,29 +348,29 @@ namespace UFame.Storage
         }
         public void SetValue(string key, int value)
         {
-            SetValue(key, 1, value);
+            SetValue(key, DataType.INT, value);
         }
         public void SetValue(string key, float value)
         {
-            SetValue(key, 2, value);
+            SetValue(key, DataType.FLOAT, value);
         }
         public void SetValue(string key, bool value)
         {
-            SetValue(key, 3, value ? 1 : 0);
+            SetValue(key, DataType.BYTE, value ? 1 : 0);
         }
         public void SetValue(string key, byte value)
         {
-            SetValue(key, 3, value);
+            SetValue(key, DataType.BYTE, value);
         }
         public void SetValue(string key, long value)
         {
-            SetValue(key, 4, value);
+            SetValue(key, DataType.LONG, value);
         }
         public void SetValue(string key, double value)
         {
-            SetValue(key, 5, value);
+            SetValue(key, DataType.DOUBLE, value);
         }
-        private void SetValue(string key, byte type, object value)
+        private void SetValue(string key, DataType type, object value)
         {
             if (!infos.TryGetValue(key, out var info))
             {
@@ -374,10 +393,7 @@ namespace UFame.Storage
                     m_changedInfos.Add(info);
                 }
             }
-            if(!delySave)
-            {
-                SaveToFile();
-            }
+            SaveToFile();
         }
 
         public bool TryGetValue(string key, out string value)

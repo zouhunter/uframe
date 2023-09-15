@@ -1,20 +1,29 @@
 ﻿//*************************************************************************************
 //* 作    者： zouhunter
 //* 创建时间： 2023-08-01
-//* 描    述：
+//* 描    述： 数据缓存信息
 
 //* ************************************************************************************
-using UnityEngine;
 
 namespace UFame.Storage
 {
-    internal class StorageInfo
+    public class StorageInfo
     {
-        internal string key;
-        internal byte type;
-        internal long anchor = -1;
-        internal ushort size;
-        internal string value;
+        public string key;
+        public DataType type;
+        public long anchor = -1;
+        public ushort size;
+        public string value;
+    }
+
+    public enum DataType : byte
+    {
+        STR = 0,
+        INT = 1,
+        FLOAT = 2,
+        BYTE = 3,
+        LONG = 4,
+        DOUBLE = 5
     }
 }
 
