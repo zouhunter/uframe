@@ -34,6 +34,1072 @@ UFrame 采用分层架构设计，主要分为以下几个层次：
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## 🏗️ 基础架构模块 (Manage)
+
+`Manage` 模块是整个 UFrame 框架的核心基础，提供了生命周期管理、单例模式、适配器模式等基础设施。所有其他模块都建立在这个基础之上。
+
+### 📐 架构设计
+
+Manage 模块采用分层设计，从底层到上层依次为：
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    业务模块 (Business Modules)                │
+│                   (BehaviourTree, UI, Network...)             │
+├─────────────────────────────────────────────────────────────┤
+│                  适配器层 (Adapter Layer)                     │
+│         ┌──────────────┬───────────────┬──────────────┐       │
+│         │  Adapter<T>  │ Adapter<T,I>  │  Singleton   │       │
+│         └──────────────┴───────────────┴──────────────┘       │
+├─────────────────────────────────────────────────────────────┤
+│                   基础层 (AdapterBase)                        │
+│              生命周期管理 + 资源管理 + 优先级控制               │
+├─────────────────────────────────────────────────────────────┤
+│                  接口层 (Interfaces)                          │
+│    ┌────────┬──────────┬────────────┬───────────┐            │
+│    │ IAlive │IInterval │IFixedUpdate│  IUpdate  │            │
+│    └────────┴──────────┴────────────┴───────────┘            │
+├─────────────────────────────────────────────────────────────┤
+│                  管理器层 (BaseGameManage)                    │
+│           全局生命周期调度 + Agent 注册管理 + Update 分发      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 🎯 核心组件
+
+#### 1. 接口层 (Interfaces)
+
+**IAlive - 生命周期接口**
+```csharp
+public interface IAlive
+{
+    bool Alive { get; }  // 标记对象是否处于活跃状态
+}
+```
+
+**IInterval - 时间间隔接口**
+```csharp
+public interface IInterval
+{
+    bool Runing { get; }    // 是否正在运行
+    float Interval { get; }  // 执行时间间隔（秒）
+}
+```
+
+**IFixedUpdate - 物理更新接口**
+```csharp
+public interface IFixedUpdate : IInterval
+{
+    void OnFixedUpdate();  // 固定时间步长更新，用于物理计算
+}
+```
+
+**IUpdate - 帧更新接口**
+```csharp
+public interface IUpdate : IInterval
+{
+    void OnUpdate();  // 每帧更新，用于游戏逻辑
+}
+```
+
+**ILateUpdate - 延迟更新接口**
+```csharp
+public interface ILateUpdate : IInterval
+{
+    void OnLateUpdate();  // 在所有 Update 之后执行，用于相机跟随等
+}
+```
+
+#### 2. 基础类 (AdapterBase)
+
+`AdapterBase` 是所有业务模块的基类，提供了生命周期管理和资源管理功能。
+
+**核心功能**:
+- **生命周期管理**: 提供 `Initialize()` 和 `Recover()` 方法管理对象的创建和销毁
+- **资源管理**: 通过 `New<T>()` 方法创建并自动管理 IDisposable 对象
+- **优先级控制**: 支持 `Priority` 属性控制初始化和更新顺序
+- **状态跟踪**: 通过 `Alive` 属性跟踪对象生命周期状态
+
+**使用示例**:
+```csharp
+using UFrame;
+
+// 创建自定义管理器
+public class CustomManager : AdapterBase
+{
+    private MyDisposableResource resource;
+    
+    public override int Priority => 100; // 优先级越高越先初始化
+    
+    protected override void OnInitialize()
+    {
+        Debug.Log("管理器初始化");
+        
+        // 使用 New 方法创建资源，框架会自动管理其生命周期
+        resource = New(() => new MyDisposableResource());
+    }
+    
+    protected override void OnRecover()
+    {
+        Debug.Log("管理器销毁");
+        // 不需要手动释放资源，框架会在 OnBeforeRecover 中自动处理
+    }
+    
+    protected override void OnAfterRecover()
+    {
+        // 清理后的额外处理
+    }
+}
+```
+
+#### 3. 适配器模板 (Adapter)
+
+Adapter 提供了三种泛型重载，支持不同的使用场景。
+
+**Adapter\<AgentContainer\> - 单例容器模式**
+
+最简单的单例实现，适用于不需要接口抽象的场景。
+
+```csharp
+using UFrame;
+
+// 定义管理器
+public class GameSettingsManager : Adapter<GameSettingsManager>
+{
+    public float MasterVolume { get; set; } = 1.0f;
+    public bool EnableVibration { get; set; } = true;
+    
+    protected override void OnInitialize()
+    {
+        base.OnInitialize();
+        LoadSettings();
+    }
+    
+    protected override void OnRecover()
+    {
+        base.OnRecover();
+        SaveSettings();
+    }
+    
+    private void LoadSettings()
+    {
+        // 从 PlayerPrefs 加载设置
+        MasterVolume = PlayerPrefs.GetFloat("MasterVolume", 1.0f);
+        EnableVibration = PlayerPrefs.GetInt("EnableVibration", 1) == 1;
+    }
+    
+    private void SaveSettings()
+    {
+        PlayerPrefs.SetFloat("MasterVolume", MasterVolume);
+        PlayerPrefs.SetInt("EnableVibration", EnableVibration ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+}
+
+// 使用方式
+public class GameUI : MonoBehaviour
+{
+    void Start()
+    {
+        // 通过 Context 访问单例
+        var settings = GameSettingsManager.Context;
+        Debug.Log($"音量: {settings.MasterVolume}");
+        
+        // 检查是否已初始化
+        if (GameSettingsManager.Valid)
+        {
+            settings.MasterVolume = 0.8f;
+        }
+    }
+}
+```
+
+**Adapter\<AgentContainer, IAgent\> - 接口模式**
+
+支持接口抽象，便于依赖注入和单元测试。
+
+```csharp
+using UFrame;
+
+// 定义接口
+public interface IPlayerDataManager
+{
+    int PlayerId { get; }
+    string PlayerName { get; set; }
+    int Level { get; set; }
+    void SaveData();
+    void LoadData();
+}
+
+// 实现管理器
+public class PlayerDataManager : Adapter<PlayerDataManager, IPlayerDataManager>, IPlayerDataManager
+{
+    public int PlayerId { get; private set; }
+    public string PlayerName { get; set; }
+    public int Level { get; set; }
+    
+    protected override IPlayerDataManager CreateAgent()
+    {
+        return this; // 返回自身作为接口实现
+    }
+    
+    protected override void OnInitialize()
+    {
+        base.OnInitialize();
+        LoadData();
+    }
+    
+    public void SaveData()
+    {
+        PlayerPrefs.SetString("PlayerName", PlayerName);
+        PlayerPrefs.SetInt("Level", Level);
+        PlayerPrefs.Save();
+        Debug.Log("玩家数据已保存");
+    }
+    
+    public void LoadData()
+    {
+        PlayerName = PlayerPrefs.GetString("PlayerName", "NewPlayer");
+        Level = PlayerPrefs.GetInt("Level", 1);
+        PlayerId = PlayerPrefs.GetInt("PlayerId", 0);
+        Debug.Log($"玩家数据已加载: {PlayerName}, Lv.{Level}");
+    }
+}
+
+// 使用方式
+public class GameController : MonoBehaviour
+{
+    private IPlayerDataManager playerData;
+    
+    void Start()
+    {
+        // 通过 Instance 获取接口实例
+        playerData = PlayerDataManager.Instance;
+        
+        Debug.Log($"欢迎回来, {playerData.PlayerName}!");
+        
+        // 修改数据
+        playerData.Level++;
+        playerData.SaveData();
+    }
+}
+```
+
+**Adapter\<AgentContainer, IAgent, Agent\> - 接口+实现分离模式**
+
+完全分离接口和实现，支持更复杂的依赖注入场景。
+
+```csharp
+using UFrame;
+
+// 定义接口
+public interface IInventoryManager
+{
+    void AddItem(int itemId, int count);
+    void RemoveItem(int itemId, int count);
+    int GetItemCount(int itemId);
+}
+
+// 定义实现类
+public class InventoryManagerImpl : AdapterBase, IInventoryManager
+{
+    private Dictionary<int, int> items = new Dictionary<int, int>();
+    
+    public void AddItem(int itemId, int count)
+    {
+        if (!items.ContainsKey(itemId))
+            items[itemId] = 0;
+        
+        items[itemId] += count;
+        Debug.Log($"添加物品 {itemId} x{count}, 当前数量: {items[itemId]}");
+    }
+    
+    public void RemoveItem(int itemId, int count)
+    {
+        if (items.ContainsKey(itemId))
+        {
+            items[itemId] = Mathf.Max(0, items[itemId] - count);
+            Debug.Log($"移除物品 {itemId} x{count}, 剩余数量: {items[itemId]}");
+        }
+    }
+    
+    public int GetItemCount(int itemId)
+    {
+        return items.ContainsKey(itemId) ? items[itemId] : 0;
+    }
+    
+    protected override void OnInitialize()
+    {
+        Debug.Log("背包系统初始化");
+        LoadInventory();
+    }
+    
+    protected override void OnRecover()
+    {
+        Debug.Log("背包系统关闭");
+        SaveInventory();
+    }
+    
+    private void LoadInventory()
+    {
+        // 从存档加载背包数据
+    }
+    
+    private void SaveInventory()
+    {
+        // 保存背包数据到存档
+    }
+}
+
+// 定义容器
+public class InventoryManagerContainer : Adapter<InventoryManagerContainer, IInventoryManager, InventoryManagerImpl>
+{
+    protected override InventoryManagerImpl CreateAgent()
+    {
+        return new InventoryManagerImpl();
+    }
+}
+
+// 使用方式
+public class ItemPickup : MonoBehaviour
+{
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // 通过 Instance 访问接口
+            var inventory = InventoryManagerContainer.Instance;
+            inventory.AddItem(1001, 1); // 添加物品
+            
+            Destroy(gameObject);
+        }
+    }
+}
+```
+
+#### 4. 单例模板 (Singleton)
+
+`Singleton<T>` 是简化版的 Adapter，提供最基础的单例功能。
+
+**特点**:
+- 线程安全的单例实现
+- 自动注册到 BaseGameManage
+- 支持手动释放
+- 更轻量级，适合简单场景
+
+**使用示例**:
+```csharp
+using UFrame;
+
+// 创建单例管理器
+public class AudioManager : Singleton<AudioManager>, IUpdate
+{
+    private AudioSource musicSource;
+    private AudioSource sfxSource;
+    private Queue<AudioClip> sfxQueue = new Queue<AudioClip>();
+    
+    public override int Priority => 50;
+    public bool Runing => true;
+    public float Interval => 0; // 每帧执行
+    
+    protected override void OnInitialize()
+    {
+        base.OnInitialize();
+        
+        // 创建音频源
+        var audioObj = new GameObject("AudioManager");
+        musicSource = audioObj.AddComponent<AudioSource>();
+        sfxSource = audioObj.AddComponent<AudioSource>();
+        
+        musicSource.loop = true;
+        GameObject.DontDestroyOnLoad(audioObj);
+        
+        Debug.Log("音频管理器初始化完成");
+    }
+    
+    protected override void OnRecover()
+    {
+        base.OnRecover();
+        
+        // 停止所有音频
+        musicSource?.Stop();
+        sfxSource?.Stop();
+        sfxQueue.Clear();
+        
+        Debug.Log("音频管理器已关闭");
+    }
+    
+    // 实现 IUpdate 接口
+    public void OnUpdate()
+    {
+        // 处理音效队列
+        if (!sfxSource.isPlaying && sfxQueue.Count > 0)
+        {
+            var clip = sfxQueue.Dequeue();
+            sfxSource.PlayOneShot(clip);
+        }
+    }
+    
+    public void PlayMusic(AudioClip clip, float volume = 1.0f)
+    {
+        if (musicSource != null && clip != null)
+        {
+            musicSource.clip = clip;
+            musicSource.volume = volume;
+            musicSource.Play();
+        }
+    }
+    
+    public void PlaySFX(AudioClip clip, float volume = 1.0f)
+    {
+        if (sfxSource != null && clip != null)
+        {
+            sfxQueue.Enqueue(clip);
+        }
+    }
+    
+    public void StopMusic()
+    {
+        musicSource?.Stop();
+    }
+}
+
+// 使用方式
+public class GameSoundController : MonoBehaviour
+{
+    public AudioClip bgMusic;
+    public AudioClip clickSound;
+    
+    void Start()
+    {
+        // 获取单例实例
+        var audioMgr = AudioManager.Instance;
+        audioMgr.PlayMusic(bgMusic, 0.6f);
+    }
+    
+    public void OnButtonClick()
+    {
+        AudioManager.Instance.PlaySFX(clickSound);
+    }
+}
+```
+
+#### 5. 游戏管理器 (BaseGameManage)
+
+`BaseGameManage` 是框架的核心调度器，负责管理所有 Agent 的生命周期和更新循环。
+
+**核心功能**:
+- **Agent 注册管理**: 注册、注销、查找 Agent
+- **优先级排序**: 按优先级排序 Agent 的初始化和更新顺序
+- **生命周期调度**: 自动调用 Initialize/Recover
+- **Update 分发**: 管理 FixedUpdate/Update/LateUpdate
+- **时间间隔控制**: 支持按指定间隔执行 Update
+- **异常处理**: 统一的异常捕获和处理
+- **单例访问**: 通过 `BaseGameManage.Single` 全局访问
+
+**工作流程**:
+
+```
+启动流程:
+1. Awake() → 设置 Single 单例
+2. Agent.Context → 触发 Adapter 初始化
+3. OnCreate() → 调用 RegistAgent()
+4. RegistAgent() → 按优先级插入列表并调用 Initialize()
+
+更新流程:
+1. FixedUpdate() → FixedUpdateManagers()
+2. Update() → UpdateManagers()
+3. LateUpdate() → LateUpdateManagers()
+   - 检查 Runing 状态
+   - 检查 Interval 时间间隔
+   - 执行相应的 OnUpdate/OnFixedUpdate/OnLateUpdate
+   - 处理异常
+
+销毁流程:
+1. OnApplicationQuit() 或 OnDestroy()
+2. UnregistAllManagers()
+3. 按优先级逆序调用 OnRemoveAgent()
+4. 调用 Recover() 回收资源
+```
+
+**使用示例**:
+
+```csharp
+using UFrame;
+using UnityEngine;
+
+// 1. 创建自定义游戏管理器
+public class MyGameManager : BaseGameManage<MyGameManager>
+{
+    protected override void OnCreate()
+    {
+        base.OnCreate();
+        Debug.Log("游戏管理器创建");
+        
+        // 在这里可以进行一些额外的初始化
+        InitializeGame();
+    }
+    
+    private void InitializeGame()
+    {
+        // 初始化游戏配置
+        Application.targetFrameRate = 60;
+        
+        // 预先创建一些管理器
+        _ = AudioManager.Instance;
+        _ = PlayerDataManager.Instance;
+    }
+    
+    protected override void OnException(Exception e)
+    {
+        // 自定义异常处理
+        Debug.LogError($"游戏异常: {e.Message}");
+        
+        // 可以在这里上报错误到服务器
+        ReportErrorToServer(e);
+        
+        base.OnException(e);
+    }
+    
+    private void ReportErrorToServer(Exception e)
+    {
+        // 上报错误逻辑
+    }
+}
+
+// 2. 创建带更新的管理器
+public class EnemySpawner : Singleton<EnemySpawner>, IUpdate
+{
+    private float spawnTimer = 0f;
+    private float spawnInterval = 3f;
+    
+    public override int Priority => 30; // 较低优先级
+    
+    public bool Runing { get; set; } = true;
+    public float Interval => 0.5f; // 每0.5秒检查一次
+    
+    protected override void OnInitialize()
+    {
+        base.OnInitialize();
+        Debug.Log("敌人生成器初始化");
+    }
+    
+    public void OnUpdate()
+    {
+        if (!Runing) return;
+        
+        spawnTimer += Time.deltaTime;
+        
+        if (spawnTimer >= spawnInterval)
+        {
+            SpawnEnemy();
+            spawnTimer = 0f;
+        }
+    }
+    
+    private void SpawnEnemy()
+    {
+        Debug.Log("生成敌人");
+        // 生成敌人的逻辑
+    }
+    
+    public void StartSpawning()
+    {
+        Runing = true;
+        Debug.Log("开始生成敌人");
+    }
+    
+    public void StopSpawning()
+    {
+        Runing = false;
+        Debug.Log("停止生成敌人");
+    }
+}
+
+// 3. 创建物理更新管理器
+public class PhysicsSimulator : Singleton<PhysicsSimulator>, IFixedUpdate
+{
+    public override int Priority => 100; // 高优先级，优先初始化
+    
+    public bool Runing { get; set; } = true;
+    public float Interval => 0; // 每个 FixedUpdate 执行
+    
+    public void OnFixedUpdate()
+    {
+        // 物理模拟逻辑
+        SimulatePhysics();
+    }
+    
+    private void SimulatePhysics()
+    {
+        // 自定义物理计算
+    }
+}
+
+// 4. 创建延迟更新管理器（相机控制）
+public class CameraController : Singleton<CameraController>, ILateUpdate
+{
+    private Transform target;
+    private Vector3 offset = new Vector3(0, 5, -10);
+    
+    public bool Runing { get; set; } = true;
+    public float Interval => 0;
+    
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
+    }
+    
+    public void OnLateUpdate()
+    {
+        if (target != null && Camera.main != null)
+        {
+            // 在所有 Update 之后更新相机位置
+            Vector3 targetPos = target.position + offset;
+            Camera.main.transform.position = Vector3.Lerp(
+                Camera.main.transform.position,
+                targetPos,
+                Time.deltaTime * 5f
+            );
+        }
+    }
+}
+
+// 5. 启动器
+public class GameStarter : MonoBehaviour
+{
+    void Awake()
+    {
+        // 确保游戏管理器存在
+        var gameMgr = MyGameManager.Instance;
+        
+        Debug.Log("游戏启动");
+    }
+    
+    void Start()
+    {
+        // 初始化各个管理器
+        InitializeManagers();
+    }
+    
+    private void InitializeManagers()
+    {
+        // 访问单例会自动注册到 BaseGameManage
+        var audio = AudioManager.Instance;
+        var playerData = PlayerDataManager.Instance;
+        var spawner = EnemySpawner.Instance;
+        var camera = CameraController.Instance;
+        
+        // 设置相机目标
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            camera.SetTarget(player.transform);
+        }
+        
+        // 开始生成敌人
+        spawner.StartSpawning();
+        
+        Debug.Log("所有管理器初始化完成");
+    }
+    
+    void OnApplicationQuit()
+    {
+        // BaseGameManage 会自动处理所有 Agent 的清理
+        Debug.Log("游戏退出");
+    }
+}
+```
+
+### 🔑 核心特性
+
+#### 1. 线程安全的单例模式
+
+所有 Adapter 和 Singleton 都使用双重检查锁定 (Double-Check Locking) 确保线程安全：
+
+```csharp
+private static object m_locker = new object();
+private static AgentContainer m_context;
+
+public static AgentContainer Context
+{
+    get
+    {
+        lock (m_locker)
+        {
+            if (m_context == null)
+            {
+                m_context = new AgentContainer();
+                m_context.OnCreate();
+            }
+        }
+        return m_context;
+    }
+}
+```
+
+#### 2. 优先级排序系统
+
+通过 `Priority` 属性控制初始化和更新顺序：
+
+```csharp
+public class HighPriorityManager : Singleton<HighPriorityManager>
+{
+    public override int Priority => 100; // 优先级越高越先初始化
+}
+
+public class LowPriorityManager : Singleton<LowPriorityManager>
+{
+    public override int Priority => 10;
+}
+
+// 初始化顺序: HighPriorityManager → LowPriorityManager
+// 销毁顺序: LowPriorityManager → HighPriorityManager (逆序)
+```
+
+#### 3. 时间间隔控制
+
+通过 `IInterval` 接口控制更新频率：
+
+```csharp
+public class SlowUpdateManager : Singleton<SlowUpdateManager>, IUpdate
+{
+    public bool Runing => true;
+    public float Interval => 2.0f; // 每2秒执行一次
+    
+    public void OnUpdate()
+    {
+        Debug.Log("每2秒执行一次");
+    }
+}
+```
+
+#### 4. 资源自动管理
+
+通过 `New<T>()` 方法创建的 IDisposable 对象会被自动管理：
+
+```csharp
+public class ResourceManager : Singleton<ResourceManager>
+{
+    protected override void OnInitialize()
+    {
+        // 使用 New 创建的资源会在 Recover 时自动释放
+        var resource1 = New<MyResource>();
+        var resource2 = New(() => new MyCustomResource());
+    }
+    
+    // Recover 时会自动调用所有 IDisposable 对象的 Dispose 方法
+}
+```
+
+#### 5. 生命周期钩子
+
+提供完整的生命周期钩子方法：
+
+```csharp
+public class LifecycleExample : Singleton<LifecycleExample>
+{
+    protected override void OnInitialize()
+    {
+        // 初始化时调用
+        Debug.Log("OnInitialize");
+    }
+    
+    protected override void OnBeforeRecover()
+    {
+        // 回收前调用，自动释放 IDisposable 资源
+        Debug.Log("OnBeforeRecover");
+    }
+    
+    protected override void OnRecover()
+    {
+        // 回收时调用
+        Debug.Log("OnRecover");
+    }
+    
+    protected override void OnAfterRecover()
+    {
+        // 回收后调用
+        Debug.Log("OnAfterRecover");
+    }
+}
+```
+
+### 📋 设计模式
+
+Manage 模块应用了多种经典设计模式：
+
+1. **单例模式 (Singleton)**: 确保全局唯一实例
+2. **适配器模式 (Adapter)**: 统一接口适配不同实现
+3. **模板方法模式 (Template Method)**: 定义生命周期框架
+4. **观察者模式 (Observer)**: Update 事件分发
+5. **工厂模式 (Factory)**: CreateAgent 方法
+6. **策略模式 (Strategy)**: 可替换的 Agent 实现
+
+### 🎯 最佳实践
+
+#### 1. 选择合适的基类
+
+```csharp
+// 简单单例 → Singleton<T>
+public class SimpleManager : Singleton<SimpleManager> { }
+
+// 不需要接口 → Adapter<T>
+public class ConfigManager : Adapter<ConfigManager> { }
+
+// 需要接口抽象 → Adapter<T, I>
+public class DataManager : Adapter<DataManager, IDataManager>, IDataManager { }
+
+// 接口和实现完全分离 → Adapter<T, I, Impl>
+public class ServiceContainer : Adapter<ServiceContainer, IService, ServiceImpl> { }
+```
+
+#### 2. 合理设置优先级
+
+```csharp
+// 基础服务 (高优先级 90-100)
+public class LogManager : Singleton<LogManager>
+{
+    public override int Priority => 100;
+}
+
+// 核心系统 (中高优先级 50-89)
+public class NetworkManager : Singleton<NetworkManager>
+{
+    public override int Priority => 80;
+}
+
+// 业务逻辑 (中等优先级 20-49)
+public class GameLogicManager : Singleton<GameLogicManager>
+{
+    public override int Priority => 30;
+}
+
+// UI 系统 (低优先级 0-19)
+public class UIManager : Singleton<UIManager>
+{
+    public override int Priority => 10;
+}
+```
+
+#### 3. 避免循环依赖
+
+```csharp
+// ❌ 错误示例：循环依赖
+public class ManagerA : Singleton<ManagerA>
+{
+    protected override void OnInitialize()
+    {
+        var b = ManagerB.Instance; // ManagerA 依赖 ManagerB
+    }
+}
+
+public class ManagerB : Singleton<ManagerB>
+{
+    protected override void OnInitialize()
+    {
+        var a = ManagerA.Instance; // ManagerB 依赖 ManagerA → 循环依赖！
+    }
+}
+
+// ✅ 正确示例：使用优先级控制初始化顺序
+public class ManagerA : Singleton<ManagerA>
+{
+    public override int Priority => 100; // 高优先级，先初始化
+}
+
+public class ManagerB : Singleton<ManagerB>
+{
+    public override int Priority => 50; // 低优先级，后初始化
+    
+    protected override void OnInitialize()
+    {
+        var a = ManagerA.Instance; // 此时 ManagerA 已初始化完成
+    }
+}
+```
+
+#### 4. 正确使用 Update 接口
+
+```csharp
+// ✅ 使用 Interval 控制更新频率
+public class EfficientManager : Singleton<EfficientManager>, IUpdate
+{
+    private bool isRunning = true;
+    
+    public bool Runing => isRunning;
+    public float Interval => 0.5f; // 每0.5秒更新一次，节省性能
+    
+    public void OnUpdate()
+    {
+        // 执行逻辑
+    }
+    
+    public void Pause()
+    {
+        isRunning = false; // 暂停更新
+    }
+    
+    public void Resume()
+    {
+        isRunning = true; // 恢复更新
+    }
+}
+
+// ❌ 避免在每帧都执行重逻辑
+public class IneffcientManager : Singleton<IneffcientManager>, IUpdate
+{
+    public bool Runing => true;
+    public float Interval => 0; // 每帧执行
+    
+    public void OnUpdate()
+    {
+        // 每帧执行复杂计算 → 性能问题！
+        ComplexCalculation();
+    }
+}
+```
+
+#### 5. 资源管理最佳实践
+
+```csharp
+public class ResourceManager : Singleton<ResourceManager>
+{
+    protected override void OnInitialize()
+    {
+        // ✅ 使用 New 方法创建需要释放的资源
+        var connection = New(() => new DatabaseConnection());
+        var fileStream = New<FileStream>();
+        
+        // ❌ 避免直接 new，会导致资源泄漏
+        // var connection = new DatabaseConnection(); // 需要手动释放
+    }
+    
+    // 框架会在 OnBeforeRecover 中自动调用所有资源的 Dispose
+}
+```
+
+### 🔍 调试技巧
+
+#### 1. 启用调试日志
+
+```csharp
+public class DebugManager : Singleton<DebugManager>
+{
+    protected override void OnInitialize()
+    {
+#if DEBUG
+        Debug.Log($"{GetType().Name}.OnInitialize - Priority: {Priority}");
+#endif
+    }
+    
+    protected override void OnRecover()
+    {
+#if DEBUG
+        Debug.Log($"{GetType().Name}.OnRecover");
+#endif
+    }
+}
+```
+
+#### 2. 检查初始化顺序
+
+```csharp
+public class InitOrderChecker : MonoBehaviour
+{
+    void Start()
+    {
+        var manage = BaseGameManage.Single;
+        if (manage != null)
+        {
+            var agents = manage.GetType()
+                .GetField("m_agents", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.GetValue(manage) as List<AdapterBase>;
+                
+            if (agents != null)
+            {
+                Debug.Log("=== Agent 初始化顺序 ===");
+                foreach (var agent in agents)
+                {
+                    Debug.Log($"{agent.GetType().Name} - Priority: {agent.Priority}, Alive: {agent.Alive}");
+                }
+            }
+        }
+    }
+}
+```
+
+#### 3. 监控 Update 性能
+
+```csharp
+public class PerformanceMonitor : Singleton<PerformanceMonitor>, IUpdate
+{
+    private System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+    
+    public bool Runing => true;
+    public float Interval => 1.0f; // 每秒检查一次
+    
+    public void OnUpdate()
+    {
+        var manage = BaseGameManage.Single;
+        // 监控各个 Update 列表的执行时间
+        Debug.Log($"FixedUpdate Count: {GetUpdateCount("m_fixedUpdates")}");
+        Debug.Log($"Update Count: {GetUpdateCount("m_updates")}");
+        Debug.Log($"LateUpdate Count: {GetUpdateCount("m_lateUpdats")}");
+    }
+    
+    private int GetUpdateCount(string fieldName)
+    {
+        var manage = BaseGameManage.Single;
+        var field = manage?.GetType().GetField(fieldName, 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var list = field?.GetValue(manage) as System.Collections.IList;
+        return list?.Count ?? 0;
+    }
+}
+```
+
+### 💡 常见问题
+
+**Q: 为什么使用 Context 而不是 Instance？**
+
+A: `Context` 用于访问容器本身，`Instance` 用于访问 Agent 实例。对于 `Adapter<T>`，两者相同；对于 `Adapter<T,I>` 和 `Adapter<T,I,Impl>`，`Instance` 返回接口类型。
+
+**Q: 如何手动释放单例？**
+
+A: 调用 `Release()` 方法：
+```csharp
+MyManager.Release(); // 会调用 OnDispose 并从 BaseGameManage 注销
+```
+
+**Q: 可以在非 Unity 主线程访问单例吗？**
+
+A: 可以访问单例实例，但不能调用 Unity API。建议使用线程安全的数据操作。
+
+**Q: Priority 相同时的初始化顺序？**
+
+A: 按照首次访问（触发初始化）的顺序。建议为不同的管理器设置不同的优先级。
+
+**Q: BaseGameManage 必须挂载到场景吗？**
+
+A: 不必须。通过 `BaseGameManage<T>.Instance` 访问会自动创建 GameObject 并挂载。
+
+### 📖 总结
+
+Manage 模块是 UFrame 框架的基石，提供了：
+
+✅ **生命周期管理**: 统一的初始化和销毁流程
+✅ **单例模式**: 线程安全的单例实现
+✅ **优先级控制**: 灵活的初始化顺序管理
+✅ **Update 分发**: 高效的更新循环调度
+✅ **资源管理**: 自动化的资源生命周期管理
+✅ **类型安全**: 强类型的泛型实现
+✅ **可扩展性**: 支持继承和自定义扩展
+
+通过合理使用 Manage 模块，可以构建出结构清晰、易于维护的游戏架构。
+
+---
+
 ## 🧩 核心模块
 
 ### 🎯 行为树系统 (BehaviourTree)
