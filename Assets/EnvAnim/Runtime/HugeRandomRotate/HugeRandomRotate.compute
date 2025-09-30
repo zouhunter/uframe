@@ -1,0 +1,36 @@
+#pragma kernel RandomRotateAngle
+#pragma kernel RotateTo
+
+float speedMin;
+float speedMax;
+float deltTime;
+
+struct BuffData
+{
+    float rotateSpeed;
+    float3 rotateAngle;
+    float3 eularAngle;
+};
+
+RWStructuredBuffer<BuffData> datas;
+
+float random(float2 co) {
+    return frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453123);
+}
+
+[numthreads(32,1,1)]
+void RandomRotateAngle(uint3 id : SV_DispatchThreadID)
+{
+    datas[id.x].rotateAngle.x = random(float2(id.x + 10, 20)) * 360;
+    datas[id.x].rotateAngle.y = random(float2(id.x + 20, 20)) * 360;
+    datas[id.x].rotateAngle.z = random(float2(id.x + 30, 20)) * 360;
+    datas[id.x].rotateSpeed = speedMin + random(float2(id.x * 100, 20)) * (speedMax - speedMin);
+}
+
+[numthreads(32,1,1)]
+void RotateTo(uint3 id : SV_DispatchThreadID)
+{
+    datas[id.x].eularAngle = datas[id.x].eularAngle + normalize(datas[id.x].rotateAngle) * datas[id.x].rotateSpeed * deltTime;
+}
+
+

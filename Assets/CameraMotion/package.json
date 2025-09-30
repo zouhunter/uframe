@@ -1,0 +1,16 @@
+{
+	"name": "io.uframe.camera_motion",
+	"version": "1.0.0",
+	"unity": "2019.4",
+    "author": {
+      "name": "Zou Hunter",
+      "email": "zouhunter@126.com",
+      "url": "https://github.com/zouhunter"
+    },
+	"license": "MIT",
+    "repository": {
+      "type": "git",
+      "url": "git+https://gitee.com/zouhunter/unity-game-frame.git"
+    },
+	"displayName": "UFrame.CameraMotion"
+}

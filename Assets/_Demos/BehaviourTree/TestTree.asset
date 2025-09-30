@@ -1,0 +1,238 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8b4a8fb33125842bf32ad9f842f5d6, type: 3}
+  m_Name: TestTree
+  m_EditorClassIdentifier: 
+  _rootTree:
+    id: 4b90b6c5-c464-4306-81f0-5e5865c4417e
+    enable: 1
+    desc: 
+    node:
+      rid: 2064593704753299457
+    condition:
+      enable: 0
+      matchType: 0
+      conditions: []
+    subTrees:
+    - rid: 3984399544982963138
+    - rid: 3984399544982963140
+    - rid: 3984399544982963142
+    - rid: 1492533256975810731
+  references:
+    version: 2
+    RefIds:
+    - rid: 1492533256975810731
+      type: {class: TreeInfo, ns: UFrame.BehaviourTree, asm: UFrame.BehaviourTree}
+      data:
+        id: 47757bb8-1ff6-430b-9924-3c00358bbe6d
+        enable: 1
+        desc: 
+        node:
+          rid: 1492533256975810732
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees: []
+    - rid: 1492533256975810732
+      type: {class: BTreeNode, ns: UFrame.BehaviourTree.Actions, asm: UFrame.BehaviourTree}
+      data:
+        name: BTreeNode
+        tree: {fileID: 11400000, guid: b9489076a23ba39468f225645652b552, type: 2}
+        _instanceTree: {fileID: 0}
+    - rid: 1492533256975811261
+      type: {class: RandomTimeCoolDownCondition, ns: UFrame.BehaviourTree.Condition, asm: UFrame.BehaviourTree}
+      data:
+        name: "\u51B7\u5374\u968F\u673A\u65F6\u95F4\u6761\u4EF6 (RandomTimeCoolDownCondition)"
+        coolTimeMin: 1
+        coolTimeMax: 5
+    - rid: 1492533256975811262
+      type: {class: PlatformCheckCondition, ns: UFrame.BehaviourTree.Condition, asm: UFrame.BehaviourTree}
+      data:
+        name: "\u5E73\u53F0 (PlatformCheckCondition)"
+        platform: 2
+    - rid: 1492533259226579906
+      type: {class: TreeInfo, ns: UFrame.BehaviourTree, asm: UFrame.BehaviourTree}
+      data:
+        id: 5d43928e-434c-44cc-8117-200ffb6e40e1
+        enable: 1
+        desc: 
+        node:
+          rid: 1492533259226579907
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees: []
+    - rid: 1492533259226579907
+      type: {class: AppointStatus, ns: UFrame.BehaviourTree.Actions, asm: UFrame.BehaviourTree}
+      data:
+        name: Success
+        status:
+          _key: 
+          _default: 3
+          _autoCreate: 1
+    - rid: 1492533259728847171
+      type: {class: PlatformCheckCondition, ns: UFrame.BehaviourTree.Condition, asm: UFrame.BehaviourTree}
+      data:
+        name: "\u5E73\u53F0 (PlatformCheckCondition)"
+        platform: 7
+    - rid: 1492533259728847173
+      type: {class: TreeInfo, ns: UFrame.BehaviourTree, asm: UFrame.BehaviourTree}
+      data:
+        id: d33c1596-2f18-43cf-9621-78fe287b131e
+        enable: 1
+        desc: 
+        node:
+          rid: 1492533259728847303
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees:
+        - rid: 1492533259728847518
+    - rid: 1492533259728847303
+      type: {class: AppointStatus, ns: UFrame.BehaviourTree.Actions, asm: UFrame.BehaviourTree}
+      data:
+        name: AppointStatus (AppointStatus)
+        status:
+          _key: 
+          _default: 0
+          _autoCreate: 1
+    - rid: 1492533259728847304
+      type: {class: ReceiveEventCondition, ns: UFrame.BehaviourTree.Condition, asm: UFrame.BehaviourTree}
+      data:
+        name: "\u4E8B\u4EF6\u63A5\u6536\u6761\u4EF6 (ReceiveEventCondition)"
+        eventName:
+          _key: 
+          _default: 
+          _autoCreate: 1
+        eventArgReceive:
+          _key: 
+          _autoCreate: 1
+    - rid: 1492533259728847305
+      type: {class: TreeInfo, ns: UFrame.BehaviourTree, asm: UFrame.BehaviourTree}
+      data:
+        id: c05a5dde-0acc-41d9-bad7-e5620665fe1d
+        enable: 1
+        desc: 
+        node:
+          rid: 3984399544982963141
+        condition:
+          enable: 1
+          matchType: 0
+          conditions:
+          - matchType: 0
+            node:
+              rid: 1492533256975811261
+            state: 0
+            subEnable: 1
+            subConditions:
+            - state: 0
+              node:
+                rid: 1492533259728847171
+          - matchType: 0
+            node:
+              rid: 1492533256975811262
+            state: 0
+            subEnable: 0
+            subConditions: []
+        subTrees: []
+    - rid: 1492533259728847306
+      type: {class: ReceiveEventCondition, ns: UFrame.BehaviourTree.Condition, asm: UFrame.BehaviourTree}
+      data:
+        name: "\u4E8B\u4EF6\u63A5\u6536\u6761\u4EF6 (ReceiveEventCondition)"
+        eventName:
+          _key: 
+          _default: 
+          _autoCreate: 1
+        eventArgReceive:
+          _key: 
+          _autoCreate: 1
+    - rid: 1492533259728847518
+      type: {class: TreeInfo, ns: UFrame.BehaviourTree, asm: UFrame.BehaviourTree}
+      data:
+        id: f72bff6e-d0a9-49ef-b10b-b10ec94b5e4d
+        enable: 1
+        desc: 
+        node:
+          rid: 1492533259728847306
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees:
+        - rid: 1492533259728847305
+    - rid: 2064593704753299457
+      type: {class: SequenceNode, ns: UFrame.BehaviourTree.Composite, asm: UFrame.BehaviourTree}
+      data:
+        name: SequenceNode
+        matchStatus: 2
+    - rid: 3984399544982963138
+      type: {class: TreeInfo, ns: UFrame.BehaviourTree, asm: UFrame.BehaviourTree}
+      data:
+        id: 96104cf0-6964-4dd3-a1b0-f9c8fba55b92
+        enable: 1
+        desc: "\u51B7\u5374\u51B7\u5374\u51B7"
+        node:
+          rid: 3984399544982963139
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees: []
+    - rid: 3984399544982963139
+      type: {class: RandomTimeCoolDownCondition, ns: UFrame.BehaviourTree.Condition, asm: UFrame.BehaviourTree}
+      data:
+        name: "\u51B7\u5374\u968F\u673A\u65F6\u95F4\u6761\u4EF6"
+        coolTimeMin: 1
+        coolTimeMax: 3
+    - rid: 3984399544982963140
+      type: {class: TreeInfo, ns: UFrame.BehaviourTree, asm: UFrame.BehaviourTree}
+      data:
+        id: 6d7574e0-092b-467c-bfb2-828d105aa5a8
+        enable: 1
+        desc: 
+        node:
+          rid: 1492533259728847304
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees:
+        - rid: 1492533259728847173
+    - rid: 3984399544982963141
+      type: {class: VariableDebugger, ns: UFrame.BehaviourTree.Actions, asm: UFrame.BehaviourTree}
+      data:
+        name: "Debug/\u53D8\u91CF\u65E5\u5FD7"
+        logType: 3
+        variableName: 12345
+        formatText: '{0}'
+    - rid: 3984399544982963142
+      type: {class: TreeInfo, ns: UFrame.BehaviourTree, asm: UFrame.BehaviourTree}
+      data:
+        id: fb4535d6-525e-4521-89cc-46bffa98e9f6
+        enable: 0
+        desc: 
+        node:
+          rid: 3984399544982963146
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees:
+        - rid: 1492533259226579906
+    - rid: 3984399544982963146
+      type: {class: UntilSuccess, ns: UFrame.BehaviourTree.Decorates, asm: UFrame.BehaviourTree}
+      data:
+        name: "\u76F4\u5230\u6210\u529F=>Success (UntilSuccess)"
+        returnStatus: 3

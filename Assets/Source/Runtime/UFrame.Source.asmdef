@@ -1,0 +1,18 @@
+{
+    "name": "UFrame.Source",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3ae80935e0f4f634d8c098ad10b838ee",
+        "GUID:27e96ceae9f9c0648921d6b163b734dd",
+        "GUID:42ad915fd88651b44aef4302bf8d7e81"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

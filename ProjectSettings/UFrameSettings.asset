@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2919e8fa9f67784481ec494df69f0e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  genCsvReader: 0
+  genBinReader: 0
+  genBinWriter: 0
+  forceMString: 0
+  valueMapConfigs: []
+--- !u!114 &2
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9c4bddd1c8ea5b41aecc489100feaaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultNamespace: Weli
+  uiViewBase: UIView
+  vmBinderBase: VMBinder
+  vmBase: ViewModel
+  useBinderVM: 0
+  uiViewReginFlag: AUTO_UI_BINDING
+  codePath: _Demos/LitUI
+  forceMutexFirstLayer: 0
+  autoCollects:
+  - flag: Img
+    assembly: UnityEngine.UI
+    type: UnityEngine.UI.Image
+    defalutProp: sprite
+    defalutEvent: 
+  - flag: Txt
+    assembly: UnityEngine.UI
+    type: UnityEngine.UI.Text
+    defalutProp: text
+    defalutEvent: 
+  - flag: Input
+    assembly: UnityEngine.UI
+    type: UnityEngine.UI.InputField
+    defalutProp: text
+    defalutEvent: 
+  - flag: Tran
+    assembly: UnityEngine.CoreModule
+    type: UnityEngine.Transform
+    defalutProp: position
+    defalutEvent: 
+  - flag: Raw
+    assembly: UnityEngine.UI
+    type: UnityEngine.UI.RawImage
+    defalutProp: texture
+    defalutEvent: 
+  - flag: Obj
+    assembly: UnityEngine.CoreModule
+    type: UnityEngine.GameObject
+    defalutProp: SetActive
+    defalutEvent: 
+  - flag: Drop
+    assembly: UnityEngine.UI
+    type: UnityEngine.UI.Dropdown
+    defalutProp: value
+    defalutEvent: 
+  - flag: TogG
+    assembly: UnityEngine.UI
+    type: UnityEngine.UI.ToggleGroup
+    defalutProp: allowSwitchOff
+    defalutEvent: 
+  - flag: Btn
+    assembly: UnityEngine.UI
+    type: UnityEngine.UI.Button
+    defalutProp: interactable
+    defalutEvent: 
+  - flag: Slider
+    assembly: UnityEngine.UI
+    type: UnityEngine.UI.Slider
+    defalutProp: value
+    defalutEvent: 
+  - flag: Bar
+    assembly: UnityEngine.UI
+    type: UnityEngine.UI.Scrollbar
+    defalutProp: value
+    defalutEvent: 
+  - flag: Tog
+    assembly: UnityEngine.UI
+    type: UnityEngine.UI.Toggle
+    defalutProp: isOn
+    defalutEvent: 
+  - flag: Scroll V
+    assembly: UnityEngine.UI
+    type: UnityEngine.UI.ScrollRect
+    defalutProp: 
+    defalutEvent: 
+  layers:
+  - Base
+  modifys: []

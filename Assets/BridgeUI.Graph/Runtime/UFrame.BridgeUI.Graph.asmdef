@@ -1,0 +1,17 @@
+{
+    "name": "UFrame.BridgeUI.Graph",
+    "rootNamespace": "",
+    "references": [
+        "GUID:8773a8a2638e7c245b9333aaa28c9665",
+        "GUID:e6d5699e0338536478eca8ca91dc1144"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

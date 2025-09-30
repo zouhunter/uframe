@@ -1,0 +1,22 @@
+{
+    "name": "UFrame.BridgeUI.General.Editors",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e6d5699e0338536478eca8ca91dc1144",
+        "GUID:a5c2b287ed3547e49a782fa8a01b1486",
+        "GUID:f5d34771d2d017c46af1e91b0ddb8f2b",
+        "GUID:8773a8a2638e7c245b9333aaa28c9665",
+        "GUID:b94d132ce761ad546835bf3bdb38bc6f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

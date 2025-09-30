@@ -1,0 +1,16 @@
+{
+    "name": "UFrame.Localization",
+    "rootNamespace": "",
+    "references": [
+        "GUID:86ba770b9ae6e004091dcd6c1e541fdd"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

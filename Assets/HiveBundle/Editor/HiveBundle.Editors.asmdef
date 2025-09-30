@@ -1,0 +1,18 @@
+{
+    "name": "HiveBundle.Editors",
+    "rootNamespace": "",
+    "references": [
+        "GUID:063de675d96b58d418973341eb0e5335"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

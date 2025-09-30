@@ -1,0 +1,14 @@
+{
+	"name": "io.uframe.datastore",
+	"version": "1.0.0",
+	"author": {
+  	  "name": "zou hunter",
+  	  "email": "zouhunter@126.com",
+  	  "url": "https://github.com/zouhunter"
+    },
+	"dependencies": {
+       "io.uframe.manage": "1.0.0",
+	   "io.uframe.common": "1.0.0"
+    },
+	"displayName": "UFrame.DataStore"
+}

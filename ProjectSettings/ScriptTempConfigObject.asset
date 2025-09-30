@@ -12,80 +12,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d57bcdd6234a93469ff98516a36a02c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  header: "//*************************************************************************************\n//*
-    \u4F5C    \u8005\uFF1A $author\n//* \u521B\u5EFA\u65F6\u95F4\uFF1A $time\n//*
-    \u63CF    \u8FF0\uFF1A\n$desc\n//* ************************************************************************************"
+  header: "//*************************************************************************************\r\n//*
+    \u4F5C    \u8005\uFF1A $author\r\n//* \u521B\u5EFA\u65F6\u95F4\uFF1A $time\r\n//*
+    \u63CF    \u8FF0\uFF1A\r\n$desc\r\n//* ************************************************************************************"
   templates:
-  - name: Enum
+  - name: "\u679A\u4E3E"
     type: 0
-    nameSpace: 
-    parentType: 
-    fields: []
-    propertys: []
-    imports:
-    - UFrame
-    description: 
-    detailInfo: []
-  - name: Class
-    type: 2
     nameSpace: UFrame
     parentType: 
-    fields: []
+    fields:
+    - type: 
+      elementName: None
+      comment: 
     propertys: []
-    imports:
-    - UnityEngine
-    - System
+    imports: []
     description: 
-    detailInfo: []
-  - name: Struct
+    detailInfo:
+    - enum
+  - name: "\u7ED3\u6784"
     type: 1
     nameSpace: UFrame
     parentType: 
     fields: []
     propertys: []
-    imports:
-    - System
+    imports: []
     description: 
     detailInfo: []
-  - name: Interface
-    type: 3
-    nameSpace: 
-    parentType: 
-    fields: []
-    propertys: []
-    imports:
-    - System
-    - UnityEngine
-    description: 
-    detailInfo: []
-  - name: Monobehaviour
+  - name: "\u7C7B-UI"
     type: 2
     nameSpace: UFrame
-    parentType: Monobehaviour
+    parentType: 
+    fields: []
+    propertys: []
+    imports:
+    - UnityEngine.UI
+    - UnityEngine
+    description: 
+    detailInfo: []
+  - name: "\u63A5\u53E3"
+    type: 3
+    nameSpace: UFrame
+    parentType: 
+    fields: []
+    propertys: []
+    imports: []
+    description: 
+    detailInfo: []
+  - name: "\u7C7B-Editor"
+    type: 2
+    nameSpace: UFrame
+    parentType: Editor
     fields: []
     propertys: []
     imports:
     - UnityEngine
+    - UnityEditor
     description: 
     detailInfo: []
-  - name: ScriptableObject
+  - name: "\u7ED3\u6784-Editor"
+    type: 1
+    nameSpace: UFrame
+    parentType: Editor
+    fields: []
+    propertys: []
+    imports:
+    - UnityEngine
+    - UnityEditor
+    description: 
+    detailInfo: []
+  - name: "\u7C7B"
     type: 2
-    nameSpace: ScriptableObject
+    nameSpace: UFrame
     parentType: 
     fields: []
     propertys: []
     imports:
     - UnityEngine
-    description: 
-    detailInfo: []
-  - name: UIView
-    type: 2
-    nameSpace: 
-    parentType: ViewBase
-    fields: []
-    propertys: []
-    imports:
-    - UnityEngine
-    - UnityEngine.UI
     description: 
     detailInfo: []

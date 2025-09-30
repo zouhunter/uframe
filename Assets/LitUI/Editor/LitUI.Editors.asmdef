@@ -1,0 +1,19 @@
+{
+    "name": "UFrame.LitUI.Editors",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1ab98ab4a4ef2a643bd87f496b86c97b",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

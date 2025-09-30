@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7ecd8f225dd394597ddfc666c78951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inspectorGui: 1
+  projectwindowGui: 1
+  groups:
+  - name: Basic
+    infos:
+    - guid: 130dcfa76b4acf74a994d9ba25df6746
+      assetPath: Assets/HiveBundle/Cube.prefab
+      bundlePath: cube1
+      nameRule: 0
+      disable: 0
+    - guid: 37977f7c8a00c964e9b8f2aebfeb502d
+      assetPath: Assets/_Demos/HiveBundle/Cube.prefab
+      bundlePath: hive/cube
+      nameRule: 0
+      disable: 0
+    - guid: 9f955da84cdaf49448463b9ff5033521
+      assetPath: Assets/_Demos/HiveBundle/Groups
+      bundlePath: hive/group
+      nameRule: 1
+      disable: 0

@@ -1,0 +1,187 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4df19ab01e9ad0549b5e2abf3143397d, type: 3}
+  m_Name: DTree
+  m_EditorClassIdentifier: UnityEngine.CoreModule:UnityEngine:ScriptableObject
+  rootNode:
+    rid: 630544725196931072
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 630544725196931072
+      type: {class: DecisionRootNode, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: -2
+        status: 0
+        question: "\u5224\u65ADGDP\u662F\u5426\u8FBE\u6807"
+        childs:
+        - rid: 630544725196931082
+        - rid: 630544725196931088
+        name: "\u7ECF\u6D4E\u5F62\u52BF\u5206\u6790\u51B3\u7B56\u6811"
+    - rid: 630544725196931082
+      type: {class: DecisionLeafNode, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: 630544726768746496
+        status: 2
+        result:
+          rid: 630544725196931090
+    - rid: 630544725196931088
+      type: {class: DecisionSelectNode, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: 630544726768746498
+        status: 1
+        question: "\u662F\u5426\u6709\u5C0F\u5B69"
+        childs:
+        - rid: 630544725196931091
+        - rid: 630544726876488316
+    - rid: 630544725196931090
+      type: {class: DecisionStringResult, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        key: Result
+        desc: "\u76F4\u63A5\u786E\u8BA4\u4F4E\u6536\u5165"
+        value: "\u4F4E\u6536\u5165"
+    - rid: 630544725196931091
+      type: {class: DecisionLeafNode, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: 630544726768746499
+        status: 2
+        result:
+          rid: 630544725196931093
+    - rid: 630544725196931093
+      type: {class: DecisionStringResult, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        key: Result
+        desc: "\u6709\u5C0F\u5B69\u6D88\u8017\u9AD8"
+        value: "\u4F4E\u6536\u5165"
+    - rid: 630544726768746496
+      type: {class: DecisionIntCondition, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        desc: "gdp\u5C0F\u4E8E300"
+        key: GDP
+        checkCompire: 2
+        value: 300
+    - rid: 630544726768746498
+      type: {class: DecisionIntCondition, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        desc: "gdp\u5C0F\u4E8E600"
+        key: GDP
+        checkCompire: 2
+        value: 600
+    - rid: 630544726768746499
+      type: {class: DecisionBoolCondition, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        desc: "\u6709\u5C0F\u5B69"
+        key: Child
+        checkCompire: 0
+        value: 1
+    - rid: 630544726876488316
+      type: {class: DecisionSelectNode, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: 630544726876488317
+        status: 1
+        question: "\u662F\u5426\u6709\u8001\u5A46"
+        childs:
+        - rid: 630544726876488319
+        - rid: 630544726876488318
+    - rid: 630544726876488317
+      type: {class: DecisionBoolCondition, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        desc: "\u65E0\u5C0F\u5B69"
+        key: Child
+        checkCompire: 0
+        value: 0
+    - rid: 630544726876488318
+      type: {class: DecisionSelectNode, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: 630544726876488322
+        status: 1
+        question: "\u662F\u5426\u6709\u5BA0\u7269"
+        childs:
+        - rid: 630544726876488323
+        - rid: 630544726876488326
+    - rid: 630544726876488319
+      type: {class: DecisionLeafNode, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: 630544726876488320
+        status: 2
+        result:
+          rid: 630544726876488321
+    - rid: 630544726876488320
+      type: {class: DecisionBoolCondition, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        desc: "\u6709\u8001\u5A46\u6D88\u8017"
+        key: Wife
+        checkCompire: 0
+        value: 1
+    - rid: 630544726876488321
+      type: {class: DecisionStringResult, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        key: Result
+        desc: "\u6709\u8001\u5A46\u6D88\u8017\u9AD8"
+        value: "\u4F4E\u6536\u5165"
+    - rid: 630544726876488322
+      type: {class: DecisionBoolCondition, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        desc: "\u6CA1\u8001\u5A46\u6D88\u8017"
+        key: Wife
+        checkCompire: 0
+        value: 0
+    - rid: 630544726876488323
+      type: {class: DecisionLeafNode, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: 630544726876488324
+        status: 2
+        result:
+          rid: 630544726876488325
+    - rid: 630544726876488324
+      type: {class: DecisionBoolCondition, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        desc: "\u6709\u5BA0\u7269"
+        key: Pet
+        checkCompire: 0
+        value: 1
+    - rid: 630544726876488325
+      type: {class: DecisionStringResult, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        key: Result
+        desc: "\u6709\u5BA0\u7269\u6D88\u8017\u9AD8"
+        value: "\u4F4E\u6536\u5165"
+    - rid: 630544726876488326
+      type: {class: DecisionLeafNode, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        condition:
+          rid: 630544726876488329
+        status: 1
+        result:
+          rid: 630544726876488328
+    - rid: 630544726876488328
+      type: {class: DecisionStringResult, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        key: Result
+        desc: "\u5355\u8EAB\u771F\u597D"
+        value: "\u4E2D\u6536\u5165"
+    - rid: 630544726876488329
+      type: {class: DecisionCondition, ns: UFrame.Decision, asm: Assembly-CSharp}
+      data:
+        desc: "\u65E0\u5BA0\u7269"
+        key: Pet
+        checkCompire: 0

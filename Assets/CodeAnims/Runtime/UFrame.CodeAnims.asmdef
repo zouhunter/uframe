@@ -1,0 +1,18 @@
+{
+    "name": "UFrame.CodeAnims",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3ae80935e0f4f634d8c098ad10b838ee",
+        "GUID:7f64c1315a24d1c40be5a32129415533",
+        "GUID:1fe05c81eccaaa44aa582ee2d7bb866d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

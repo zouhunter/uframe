@@ -1,0 +1,258 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d0e094ea49717d4b9ea81ac6480d552, type: 3}
+  m_Name: NTree
+  m_EditorClassIdentifier: UnityEngine.CoreModule:UnityEngine:ScriptableObject
+  worldState:
+    keys:
+    - a
+    - b
+  rootTree:
+    id: 
+    enable: 1
+    desc: 
+    node:
+      rid: 630544705008173368
+    condition:
+      enable: 0
+      matchType: 0
+      conditions: []
+    subTrees:
+    - rid: 630544705008173369
+    - rid: 630544705008173370
+    - rid: 630544705008173371
+    - rid: 630544706304213020
+    checks:
+    - rid: 630544707849814016
+    - rid: 630544707849814057
+    - rid: 630544707849814058
+    effects:
+    - rid: 630544700247375911
+    - rid: 630544707849814056
+  autoPlan: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 630544700247375911
+      type: {class: IntEffect, ns: UFrame.HTN, asm: Assembly-CSharp}
+      data:
+        key: a
+        apply: 0
+        effectType: 0
+        value: 1
+    - rid: 630544705008173368
+      type: {class: SequenceMethodNode, ns: UFrame.HTN, asm: Assembly-CSharp}
+      data:
+        name: Root-Selector
+    - rid: 630544705008173369
+      type: {class: TaskInfo, ns: UFrame, asm: Assembly-CSharp}
+      data:
+        id: e13422e3
+        enable: 1
+        desc: 
+        node:
+          rid: 630544705008173372
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees: []
+        checks: []
+        effects: []
+    - rid: 630544705008173370
+      type: {class: TaskInfo, ns: UFrame, asm: Assembly-CSharp}
+      data:
+        id: a499c0cd
+        enable: 1
+        desc: 
+        node:
+          rid: 630544705008173374
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees:
+        - rid: 630544705008173375
+        - rid: 630544705008173376
+        checks: []
+        effects: []
+    - rid: 630544705008173371
+      type: {class: TaskInfo, ns: UFrame, asm: Assembly-CSharp}
+      data:
+        id: ff5160c7
+        enable: 1
+        desc: 
+        node:
+          rid: 630544705008173377
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees: []
+        checks: []
+        effects: []
+    - rid: 630544705008173372
+      type: {class: VariableDebugger, ns: UFrame.BehaviourTree.Actions, asm: UFrame.BehaviourTree}
+      data:
+        name: Child1-VariableDebugger
+        logType: 0
+        variableName: a
+        formatText: '{0}'
+    - rid: 630544705008173374
+      type: {class: ParallelMethodNode, ns: UFrame.HTN, asm: Assembly-CSharp}
+      data:
+        name: Child2-Parallel
+        matchType: 0
+    - rid: 630544705008173375
+      type: {class: TaskInfo, ns: UFrame, asm: Assembly-CSharp}
+      data:
+        id: 16cffc38
+        enable: 1
+        desc: 
+        node:
+          rid: 630544705008173378
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees:
+        - rid: 630544705008173379
+        - rid: 630544705008173380
+        checks: []
+        effects: []
+    - rid: 630544705008173376
+      type: {class: TaskInfo, ns: UFrame, asm: Assembly-CSharp}
+      data:
+        id: c92de466
+        enable: 1
+        desc: 
+        node:
+          rid: 630544705008173381
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees: []
+        checks: []
+        effects: []
+    - rid: 630544705008173377
+      type: {class: VariableDebugger, ns: UFrame.BehaviourTree.Actions, asm: UFrame.BehaviourTree}
+      data:
+        name: Child3-VariableDebugger
+        logType: 0
+        variableName: a
+        formatText: '{0}'
+    - rid: 630544705008173378
+      type: {class: SequenceMethodNode, ns: UFrame.HTN, asm: Assembly-CSharp}
+      data:
+        name: Child2-1-Sequence
+    - rid: 630544705008173379
+      type: {class: TaskInfo, ns: UFrame, asm: Assembly-CSharp}
+      data:
+        id: 0926be90
+        enable: 0
+        desc: 
+        node:
+          rid: 630544705008173382
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees: []
+        checks: []
+        effects: []
+    - rid: 630544705008173380
+      type: {class: TaskInfo, ns: UFrame, asm: Assembly-CSharp}
+      data:
+        id: 043e215d
+        enable: 1
+        desc: 
+        node:
+          rid: 630544705008173383
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees: []
+        checks: []
+        effects: []
+    - rid: 630544705008173381
+      type: {class: VariableDebugger, ns: UFrame.BehaviourTree.Actions, asm: UFrame.BehaviourTree}
+      data:
+        name: Child2-2-VariableDebugger2
+        logType: 0
+        variableName: a
+        formatText: '{0}'
+    - rid: 630544705008173382
+      type: {class: VariableDebugger, ns: UFrame.BehaviourTree.Actions, asm: UFrame.BehaviourTree}
+      data:
+        name: Child2-1-1-VariableDebugger1
+        logType: 0
+        variableName: a
+        formatText: '{0}'
+    - rid: 630544705008173383
+      type: {class: VariableDebugger, ns: UFrame.BehaviourTree.Actions, asm: UFrame.BehaviourTree}
+      data:
+        name: Child2-1-2-VariableDebugger2
+        logType: 0
+        variableName: a
+        formatText: '{0}'
+    - rid: 630544706304213020
+      type: {class: TaskInfo, ns: UFrame, asm: Assembly-CSharp}
+      data:
+        id: 4c34cb60
+        enable: 1
+        desc: 
+        node:
+          rid: 630544706304213021
+        condition:
+          enable: 0
+          matchType: 0
+          conditions: []
+        subTrees: []
+        checks: []
+        effects: []
+    - rid: 630544706304213021
+      type: {class: NTreeNode, ns: UFrame.HTN, asm: Assembly-CSharp}
+      data:
+        name: "\u5206\u5B50\u5C42\u6811"
+        independent: 1
+        tree: {fileID: 11400000, guid: 9f6667530f2ad8448923a6aff20944b5, type: 2}
+        _instanceTree: {fileID: 0}
+    - rid: 630544707849814016
+      type: {class: IntCheck, ns: UFrame.HTN, asm: Assembly-CSharp}
+      data:
+        Key: a
+        state: 0
+        checkCompire: 0
+        Value: 0
+    - rid: 630544707849814056
+      type: {class: BoolEffect, ns: UFrame.HTN, asm: Assembly-CSharp}
+      data:
+        key: 55
+        apply: 0
+        effectType: 0
+        value: 0
+    - rid: 630544707849814057
+      type: {class: BoolCheck, ns: UFrame.HTN, asm: Assembly-CSharp}
+      data:
+        Key: 
+        state: 0
+        checkCompire: 0
+        Value: 0
+    - rid: 630544707849814058
+      type: {class: GameObjectCheck, ns: UFrame.HTN, asm: Assembly-CSharp}
+      data:
+        Key: 
+        state: 0
+        checkCompire: 0
+        Value: {fileID: 0}

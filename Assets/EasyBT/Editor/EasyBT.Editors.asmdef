@@ -1,0 +1,18 @@
+{
+    "name": "UFrame.EasyBT.Editors",
+    "rootNamespace": "",
+    "references": [
+        "GUID:2cb3cc5d6e97abd4eaa20015bd8ed101"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fccce41af7f85de4cb391ba5df21f73a, type: 3}
+  m_Name: UIGroup
+  m_EditorClassIdentifier: 
+  infos:
+  - name: TestUI
+    guid: 12272020ca5f4e8479277328fa9085fd
+    layer: 0
+    priority: 0
+    modify: 0
+    mutex: 0

@@ -1,0 +1,266 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19009375b8224d79a6d7e79046854e8, type: 3}
+  m_Name: CodeExporter
+  m_EditorClassIdentifier: Assembly-CSharp-Editor:UFrame:CodeExportObject
+  exportPath: Export
+  encryptDll: 1
+  includeMeta: 1
+  buildInfos:
+  - dirName: DressAB
+    additionalDefines: 
+    active: 1
+  - dirName: Http
+    additionalDefines: 
+    active: 1
+  - dirName: LitUI
+    additionalDefines: 
+    active: 1
+  - dirName: Manage
+    additionalDefines: 
+    active: 1
+  - dirName: TableCfg
+    additionalDefines: 
+    active: 1
+  - dirName: AssetBundles
+    additionalDefines: 
+    active: 1
+  - dirName: AudioPlayer
+    additionalDefines: 
+    active: 1
+  - dirName: BgTransparent
+    additionalDefines: 
+    active: 1
+  - dirName: BridgeUI
+    additionalDefines: 
+    active: 1
+  - dirName: BridgeUI.General
+    additionalDefines: 
+    active: 1
+  - dirName: BridgeUI.Graph
+    additionalDefines: 
+    active: 1
+  - dirName: Calculator
+    additionalDefines: 
+    active: 1
+  - dirName: CameraMotion
+    additionalDefines: 
+    active: 1
+  - dirName: Carrier
+    additionalDefines: 
+    active: 1
+  - dirName: CodeAnims
+    additionalDefines: 
+    active: 1
+  - dirName: CodeGuard
+    additionalDefines: 
+    active: 1
+  - dirName: CodeLink
+    additionalDefines: 
+    active: 1
+  - dirName: Collections
+    additionalDefines: 
+    active: 1
+  - dirName: CoolDown
+    additionalDefines: 
+    active: 1
+  - dirName: Coroutines
+    additionalDefines: 
+    active: 1
+  - dirName: CubeMap
+    additionalDefines: 
+    active: 1
+  - dirName: DataPack
+    additionalDefines: 
+    active: 1
+  - dirName: DataStore
+    additionalDefines: 
+    active: 1
+  - dirName: Debugging
+    additionalDefines: 
+    active: 1
+  - dirName: Dialog
+    additionalDefines: 
+    active: 1
+  - dirName: Dispatch
+    additionalDefines: 
+    active: 1
+  - dirName: EffectPlayer
+    additionalDefines: 
+    active: 1
+  - dirName: EnvAnim
+    additionalDefines: 
+    active: 1
+  - dirName: EventStates
+    additionalDefines: 
+    active: 1
+  - dirName: Ftp
+    additionalDefines: 
+    active: 1
+  - dirName: Geometry
+    additionalDefines: 
+    active: 1
+  - dirName: Guide
+    additionalDefines: 
+    active: 1
+  - dirName: Input
+    additionalDefines: 
+    active: 1
+  - dirName: InputLit
+    additionalDefines: 
+    active: 1
+  - dirName: Isometric
+    additionalDefines: 
+    active: 1
+  - dirName: Jobs
+    additionalDefines: 
+    active: 1
+  - dirName: Localization
+    additionalDefines: 
+    active: 1
+  - dirName: Logs
+    additionalDefines: 
+    active: 1
+  - dirName: LoopScrollView
+    additionalDefines: 
+    active: 1
+  - dirName: Massive
+    additionalDefines: 
+    active: 1
+  - dirName: MultiThread
+    additionalDefines: 
+    active: 1
+  - dirName: NetSocket
+    additionalDefines: 
+    active: 1
+  - dirName: NodeGraph
+    additionalDefines: 
+    active: 1
+  - dirName: ObjDrawer
+    additionalDefines: 
+    active: 1
+  - dirName: PathFind
+    additionalDefines: 
+    active: 1
+  - dirName: Pause
+    additionalDefines: 
+    active: 1
+  - dirName: Perform
+    additionalDefines: 
+    active: 1
+  - dirName: Pool
+    additionalDefines: 
+    active: 1
+  - dirName: PrefabBinding
+    additionalDefines: 
+    active: 1
+  - dirName: Process
+    additionalDefines: 
+    active: 1
+  - dirName: PureMVC
+    additionalDefines: 
+    active: 1
+  - dirName: Refrence
+    additionalDefines: 
+    active: 1
+  - dirName: Rendering
+    additionalDefines: 
+    active: 1
+  - dirName: ResContent
+    additionalDefines: 
+    active: 1
+  - dirName: SceneLoad
+    additionalDefines: 
+    active: 1
+  - dirName: ScriptGen
+    additionalDefines: 
+    active: 1
+  - dirName: Serizlize
+    additionalDefines: 
+    active: 1
+  - dirName: Setting
+    additionalDefines: 
+    active: 1
+  - dirName: SharpZipLib
+    additionalDefines: 
+    active: 1
+  - dirName: Source
+    additionalDefines: 
+    active: 1
+  - dirName: Task
+    additionalDefines: 
+    active: 1
+  - dirName: Timer
+    additionalDefines: 
+    active: 1
+  - dirName: TinyUI
+    additionalDefines: 
+    active: 1
+  - dirName: ToolMenus
+    additionalDefines: 
+    active: 1
+  - dirName: Tween
+    additionalDefines: 
+    active: 1
+  - dirName: UIEffect
+    additionalDefines: 
+    active: 1
+  - dirName: UnityInternalIcons
+    additionalDefines: 
+    active: 1
+  - dirName: Widget
+    additionalDefines: 
+    active: 1
+  - dirName: XR
+    additionalDefines: 
+    active: 1
+  - dirName: BehaviourTree
+    additionalDefines: 
+    active: 1
+  - dirName: Common
+    additionalDefines: 
+    active: 1
+  - dirName: EasyBT
+    additionalDefines: 
+    active: 1
+  - dirName: EventCenter
+    additionalDefines: 
+    active: 1
+  - dirName: MobileInput
+    additionalDefines: 
+    active: 1
+  - dirName: Storage
+    additionalDefines: 
+    active: 1
+  - dirName: HiveBundle
+    additionalDefines: 
+    active: 1
+  replaceStrings:
+  - oldStr: UFrame.BehaviourTree
+    newStr: MateAI.ScriptableBehaviourTree
+  - oldStr: UFrame.HiveBundle
+    newStr: MateAI
+  - oldStr: UFrame
+    newStr: MateAI
+  - oldStr: uframe@zht
+    newStr: wekoi@zht
+  - oldStr: UFrame@zht
+    newStr: weli@zht
+  - oldStr: io.uframe.easybt
+    newStr: io.wekoi.scriptablebt
+  - oldStr: io.uframe.hiveab
+    newStr: weli-unity.dressab
+  replaceFileExts:
+  - .cs
+  - .asmdef
+  - .asset
+  - .json

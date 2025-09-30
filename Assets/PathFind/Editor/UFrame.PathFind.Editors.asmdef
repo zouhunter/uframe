@@ -1,0 +1,20 @@
+{
+    "name": "UFrame.PathFind.Editors",
+    "rootNamespace": "",
+    "references": [
+        "GUID:dc085607aee424f4e9d77d2f3ff5b534",
+        "GUID:1de87b511055043489f9adf4b5e08914",
+        "GUID:b21bc1307ab42694c9b64b0040d5163a"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

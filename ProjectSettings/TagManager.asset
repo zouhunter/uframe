@@ -13,8 +13,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - Obstacle
+  - PickupAble
   - 
   - 
   - 
@@ -40,4 +40,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Ground
+    uniqueID: 1418093821
+    locked: 0
+  - name: Interact
+    uniqueID: 1499474459
+    locked: 0
+  - name: Particle
+    uniqueID: 480981353
     locked: 0

@@ -1,0 +1,18 @@
+{
+    "name": "UFrame.NodeGraph.Editors",
+    "rootNamespace": "",
+    "references": [
+        "GUID:8773a8a2638e7c245b9333aaa28c9665"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

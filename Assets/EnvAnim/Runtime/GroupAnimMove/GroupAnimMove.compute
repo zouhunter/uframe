@@ -1,0 +1,48 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel AnimStateInit
+#pragma kernel AnimRotateMove
+
+int moveSpeedMin;
+int moveSpeedMax;
+int rotateSpeedMin;
+int rotateSpeedMax;
+float3 rotateAxis;
+float timeNow;
+float animTime;
+
+struct CsAnimInput
+{
+    float timeStart;
+    float roateSpeed;
+    float3 startPos;
+    float3 endPos;
+};
+
+struct CsAnimOutput {
+    float3 pos;
+    float3 rot;
+};
+
+RWStructuredBuffer<CsAnimInput> Input;
+RWStructuredBuffer<CsAnimOutput> Output;
+
+
+float random(float min,float max) {
+    return frac(sin(dot(float2(min,max), float2(12.9898, 78.233))) * 43758.5453123);
+}
+
+
+[numthreads(8, 8, 1)]
+void AnimStateInit(uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+}
+
+
+[numthreads(8,8,1)]
+void AnimRotateMove(uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+}

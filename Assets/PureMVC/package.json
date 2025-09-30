@@ -1,0 +1,10 @@
+{
+	"name": "io.uframe.pure_mvc",
+	"version": "1.0.0",
+	"author": {
+  	  "name": "zou hunter",
+  	  "email": "zouhunter@126.com",
+  	  "url": "https://github.com/zouhunter"
+    },
+	"displayName": "UFrame.PureMVC"
+}
